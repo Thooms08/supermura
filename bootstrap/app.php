@@ -19,9 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
-        // 2. Mengecualikan route webhook Xendit dari proteksi CSRF
+        // Mengecualikan route webhook Mayar dari proteksi CSRF
         $middleware->validateCsrfTokens(except: [
-            'xendit/callback',
+            'mayar/callback',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

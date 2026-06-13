@@ -9,21 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    // database/migrations/xxxx_xx_xx_create_affiliators_table.php
-public function up()
-{
-    Schema::create('affiliators', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama');
-        $table->string('no_whatsapp');
-        $table->string('domisili');
-        $table->enum('metode_pembayaran', ['tunai', 'transfer'])->nullable();
-        $table->string('bukti_transfer')->nullable();
-        $table->integer('nominal_tunai')->nullable();
-        $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
-        $table->timestamps();
-    });
-}
+    public function up(): void
+    {
+        Schema::create('affiliators', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->string('no_whatsapp');
+            $table->string('domisili');
+            $table->enum('metode_pembayaran', ['tunai', 'transfer'])->nullable();
+            $table->string('bukti_transfer')->nullable();
+            $table->integer('nominal_tunai')->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.

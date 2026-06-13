@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Toko | Admin</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -52,7 +51,7 @@
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         <div class="h-32 bg-gradient-to-r from-orange-400 to-orange-500 relative">
                             <div class="absolute -bottom-10 left-6">
-                                <img src="{{ $toko->foto_toko ? asset('asset/profile-toko/'.$toko->foto_toko) : 'https://ui-avatars.com/api/?name='.$toko->nama_toko.'&background=FB923C&color=fff' }}" 
+                                <img src="{{ $toko->foto_toko ? asset('storage/profile-toko/'.$toko->foto_toko) : 'https://ui-avatars.com/api/?name='.$toko->nama_toko.'&background=FB923C&color=fff' }}" 
                                      class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-sm bg-white">
                             </div>
                         </div>
@@ -97,14 +96,14 @@
         </div>
     </div>
 
-    <div x-show="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
-        <div @click.away="showModal = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+    <div x-show="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto" x-cloak>
+        <div @click.away="showModal = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl flex flex-col my-auto" style="max-height: 90vh;">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
                 <h3 class="text-xl font-bold text-gray-800" x-text="editMode ? 'Edit Profile Toko' : 'Tambah Toko Baru'"></h3>
                 <button @click="showModal = false" class="text-gray-400 hover:text-gray-600"><i class="bi bi-x-lg"></i></button>
             </div>
             <form :action="editMode ? `/admin/profile-toko/${currentToko.id}` : '{{ route('profile-toko.store') }}'" 
-                  method="POST" enctype="multipart/form-data" class="p-6 space-y-4">
+                  method="POST" enctype="multipart/form-data" class="p-6 space-y-4 overflow-y-auto flex-1">
                 @csrf
                 <template x-if="editMode">
                     <input type="hidden" name="_method" value="PUT">
@@ -146,7 +145,7 @@
                     </div>
                 </div>
 
-                <div class="pt-4 flex gap-3">
+                <div class="pt-4 flex gap-3 flex-shrink-0">
                     <button type="button" @click="showModal = false" class="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl">Batal</button>
                     <button type="submit" class="flex-1 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-200 transition-all">
                         Simpan Perubahan

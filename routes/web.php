@@ -1,42 +1,65 @@
 <?php
 
-use App\Http\Controllers\AdminAffiliatorController;
-use App\Http\Controllers\AdminAlatPromosiController;
-use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\AdminHistoryKomisiController;
-use App\Http\Controllers\AdminProdukController;
+use App\Http\Controllers\Admin\AdminAffiliatorController;
+use App\Http\Controllers\Admin\AdminAlatPromosiController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminHistoryKomisiController;
+use App\Http\Controllers\Admin\AdminKomisiController;
+use App\Http\Controllers\Admin\AdminLaporanController;
+use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminOrderFailController;
+use App\Http\Controllers\Admin\AdminOrderProcessController;
+use App\Http\Controllers\Admin\AdminOrderSuccessController;
+use App\Http\Controllers\Admin\AdminOrderSendController;
+use App\Http\Controllers\Admin\AdminPengajuanKomisiController;
+use App\Http\Controllers\Admin\AdminProdukController;
+use App\Http\Controllers\Admin\AdminRefundController;
+use App\Http\Controllers\Admin\AdminShippingController;
+use App\Http\Controllers\Admin\AdminTokoController;
+use App\Http\Controllers\Admin\AdminUlasanController;
+use App\Http\Controllers\Affiliator\AffiliateAlatPromosiController;
+use App\Http\Controllers\Affiliator\AffiliateDashboardController;
+use App\Http\Controllers\Affiliator\AffiliateKomisiController;
+use App\Http\Controllers\Affiliator\AffiliateNotifikasiController;
+use App\Http\Controllers\Affiliator\AffiliateProdukAfiliasiController;
+use App\Http\Controllers\Affiliator\AffiliateProfileController;
+use App\Http\Controllers\pengunjung\CartController;
+use App\Http\Controllers\pengunjung\PengunjungController;
+use App\Http\Controllers\pengunjung\PengunjungPesananController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GoogleAuthController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminTokoController;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\AdminShippingController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\PengunjungController;
+use App\Http\Controllers\DaftarAffiliateController;
+use App\Http\Controllers\GoogleAuthController;
+use App\Http\Controllers\PaymentCallbackController;
+use App\Http\Controllers\ProgramAffiliateController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\UlasanController;
-use App\Http\Controllers\AffiliateDashboardController;
-use App\Http\Controllers\AffiliateProfileController;
-use App\Http\Controllers\AdminKomisiController;
-use App\Http\Controllers\AdminPengajuanKomisiController;
-use App\Http\Controllers\AffiliateAlatPromosiController;
-use App\Http\Controllers\AffiliateKomisiController;
-use App\Http\Controllers\AffiliateNotifikasiController;
-use App\Http\Controllers\AffiliateProdukAfiliasiController;
-use App\Http\Controllers\DaftarAffiliateController;
-use App\Http\Controllers\ProgramAffiliateController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+
+
+
 // Public Routes
 Route::get('/', [PublicController::class, 'index'])->name('home');
-Route::get('/product/{produk}', [PublicController::class, 'show'])->name('product.show');
+Route::get('/product/{produk:slug}', [PublicController::class, 'show'])->name('product.show');
 Route::get('/search-products', [PublicController::class, 'search'])->name('product.search');
 
 Route::get('/program-affiliate', [ProgramAffiliateController::class, 'index'])->name('affiliate.program');
+
+Route::get('/tentang-kami', function () {return view('tentang');})->name('tentang');
+
+Route::get('/syarat-dan-ketentuan', function () {return view('ketentuan-syarat');})->name('ketentuan');
+
+Route::get('/faq', function () {return view('faq');})->name('faq');
+
+Route::get('/kebijakan-privasi-dan-keamanan', function () {return view('privasi-keamanan');})->name('privasi');
 
 
 Route::get('/daftar-affiliate', [DaftarAffiliateController::class, 'index'])->name('affiliate.register');
 Route::post('/daftar-affiliate', [DaftarAffiliateController::class, 'store'])->name('affiliate.register.store');
 
-Route::post('/xendit/callback', [\App\Http\Controllers\PaymentCallbackController::class, 'handleXenditCallback']);
+Route::post('/mayar/callback', [PaymentCallbackController::class, 'handleMayarCallback'])->name('mayar.callback');
 // Auth Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -68,8 +91,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::post('/buy-now', [PublicController::class, 'buyNow'])->name('buy.now');
-    Route::get('/pesanan-saya', [App\Http\Controllers\PengunjungPesananController::class, 'index'])->name('pengunjung.pesanan');
-    Route::post('/pesanan-saya/batalkan/{id}', [App\Http\Controllers\PengunjungPesananController::class, 'batalkan'])->name('pengunjung.pesanan.batalkan');
+    Route::get('/pesanan-saya', [PengunjungPesananController::class, 'index'])->name('pengunjung.pesanan');
+    Route::post('/pesanan-saya/batalkan/{id}', [PengunjungPesananController::class, 'batalkan'])->name('pengunjung.pesanan.batalkan');
+    Route::post('/pesanan-saya/konfirmasi-terima/{id}', [PengunjungPesananController::class, 'konfirmasiTerima'])->name('pengunjung.pesanan.konfirmasi');
     Route::get('/daftar-alamat', [PengunjungController::class, 'daftarAlamat'])->name('pengunjung.alamat.index');
     Route::get('/tambah-alamat', [PengunjungController::class, 'tambahAlamat'])->name('pengunjung.alamat.create');
     Route::post('/tambah-alamat', [PengunjungController::class, 'storeAlamat'])->name('pengunjung.alamat.store');
@@ -77,12 +101,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/alamat/{id}/edit', [PengunjungController::class, 'editAlamat'])->name('pengunjung.alamat.edit');
     Route::put('/alamat/{id}', [PengunjungController::class, 'updateAlamat'])->name('pengunjung.alamat.update');
     Route::delete('/alamat/{id}', [PengunjungController::class, 'destroyAlamat'])->name('pengunjung.alamat.destroy');
-    Route::get('/keranjang', [App\Http\Controllers\CartController::class, 'index'])->name('keranjang.index');
-    Route::post('/keranjang/add', [App\Http\Controllers\CartController::class, 'store'])->name('keranjang.store');
-    Route::patch('/keranjang/update/{id}', [App\Http\Controllers\CartController::class, 'update'])->name('keranjang.update');
-    Route::delete('/keranjang/delete/{id}', [App\Http\Controllers\CartController::class, 'destroy'])->name('keranjang.destroy');
-    Route::post('/keranjang/checkout', [App\Http\Controllers\CartController::class, 'processToCheckout'])->name('keranjang.checkout.process');
-    Route::post('/product/ulasan', [App\Http\Controllers\UlasanController::class, 'store'])->name('ulasan.store');
+    Route::get('/keranjang', [CartController::class, 'index'])->name('keranjang.index');
+    Route::post('/keranjang/add', [CartController::class, 'store'])->name('keranjang.store');
+    Route::patch('/keranjang/update/{id}', [CartController::class, 'update'])->name('keranjang.update');
+    Route::delete('/keranjang/delete/{id}', [CartController::class, 'destroy'])->name('keranjang.destroy');
+    Route::post('/keranjang/checkout', [CartController::class, 'processToCheckout'])->name('keranjang.checkout.process');
+    Route::post('/product/ulasan', [UlasanController::class, 'store'])->name('ulasan.store');
     Route::put('/ulasan/{id}', [UlasanController::class, 'update'])->name('ulasan.update');
     Route::delete('/ulasan/{id}', [UlasanController::class, 'destroy'])->name('ulasan.destroy');
 });
@@ -92,26 +116,30 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::put('/profile/update', [AdminDashboardController::class, 'updateProfile'])->name('admin.profile.update');
     Route::resource('produk', AdminProdukController::class);
     Route::delete('produk-foto/{foto}', [AdminProdukController::class, 'destroyFoto'])->name('produk-foto.destroy');
-    Route::get('/orders', [App\Http\Controllers\AdminOrderController::class, 'index'])->name('admin.orders.index');
-    Route::patch('/orders/{id}/status', [App\Http\Controllers\AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
-    Route::get('/orders-process', [App\Http\Controllers\AdminOrderProcessController::class, 'index'])->name('admin.orders.process');
-    Route::patch('/orders-process/{id}/fail', [App\Http\Controllers\AdminOrderProcessController::class, 'markAsFail'])->name('admin.orders.markAsFail');
-    Route::patch('/orders-process/{id}/success', [App\Http\Controllers\AdminOrderProcessController::class, 'markAsSuccess'])->name('admin.orders.markAsSuccess');
-    Route::get('/orders-success', [App\Http\Controllers\AdminOrderSuccessController::class, 'index'])->name('admin.orders.success');
-    Route::get('/orders-fail', [App\Http\Controllers\AdminOrderFailController::class, 'index'])->name('admin.orders.fail');
-    Route::get('/orders-pending-count', [App\Http\Controllers\AdminOrderController::class, 'getPendingCount'])->name('admin.orders.pendingCount');
-    Route::get('/refunds-pending', [App\Http\Controllers\AdminRefundController::class, 'index'])->name('admin.refunds.pending');
-    Route::patch('/refunds/{id}/update', [App\Http\Controllers\AdminRefundController::class, 'updateStatus'])->name('admin.refunds.update');
-    Route::get('/refunds-count', [App\Http\Controllers\AdminRefundController::class, 'getPendingCount'])->name('admin.refunds.count');
-    Route::get('/refunds-success', [App\Http\Controllers\AdminRefundController::class, 'successIndex'])->name('admin.refunds.success');
-    Route::get('/refunds-success/search', [App\Http\Controllers\AdminRefundController::class, 'successSearch'])->name('admin.refunds.search');
-    Route::get('/refunds-fail', [App\Http\Controllers\AdminRefundController::class, 'failIndex'])->name('admin.refunds.fail');
-    Route::get('/refunds-fail/search', [App\Http\Controllers\AdminRefundController::class, 'failSearch'])->name('admin.refunds.search');
-    Route::get('/ulasan', [App\Http\Controllers\AdminUlasanController::class, 'index'])->name('admin.ulasan.index');
-    Route::delete('/ulasan/{id}', [App\Http\Controllers\AdminUlasanController::class, 'destroy'])->name('admin.ulasan.destroy');
-    Route::get('/laporan', [App\Http\Controllers\AdminLaporanController::class, 'index'])->name('admin.laporan.index');
-    Route::get('/laporan/penjualan', [App\Http\Controllers\AdminLaporanController::class, 'penjualan'])->name('admin.laporan.penjualan');
-    Route::get('/laporan/refund', [App\Http\Controllers\AdminLaporanController::class, 'refund'])->name('admin.laporan.refund');
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('admin.orders.index');
+    Route::patch('/orders/{id}/status', [AdminOrderController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+    Route::get('/orders-process', [AdminOrderProcessController::class, 'index'])->name('admin.orders.process');
+    Route::get('/orders-process-count', [AdminOrderProcessController::class, 'getProcessCount'])->name('admin.orders.processCount');
+    Route::patch('/orders-process/{id}/fail', [AdminOrderProcessController::class, 'markAsFail'])->name('admin.orders.markAsFail');
+    Route::patch('/orders-process/{id}/success', [AdminOrderProcessController::class, 'markAsSuccess'])->name('admin.orders.markAsSuccess');
+    Route::get('/orders-send', [AdminOrderSendController::class, 'index'])->name('admin.orders.send');
+    Route::patch('/orders-send/{id}/arrived', [AdminOrderSendController::class, 'markAsArrived'])->name('admin.orders.markAsArrived');
+    Route::get('/orders-send-count', [AdminOrderSendController::class, 'getSendCount'])->name('admin.orders.sendCount');
+    Route::get('/orders-success', [AdminOrderSuccessController::class, 'index'])->name('admin.orders.success');
+    Route::get('/orders-fail', [AdminOrderFailController::class, 'index'])->name('admin.orders.fail');
+    Route::get('/orders-pending-count', [AdminOrderController::class, 'getPendingCount'])->name('admin.orders.pendingCount');
+    Route::get('/refunds-pending', [AdminRefundController::class, 'index'])->name('admin.refunds.pending');
+    Route::patch('/refunds/{id}/update', [AdminRefundController::class, 'updateStatus'])->name('admin.refunds.update');
+    Route::get('/refunds-count', [AdminRefundController::class, 'getPendingCount'])->name('admin.refunds.count');
+    Route::get('/refunds-success', [AdminRefundController::class, 'successIndex'])->name('admin.refunds.success');
+    Route::get('/refunds-success/search', [AdminRefundController::class, 'successSearch'])->name('admin.refunds.search');
+    Route::get('/refunds-fail', [AdminRefundController::class, 'failIndex'])->name('admin.refunds.fail');
+    Route::get('/refunds-fail/search', [AdminRefundController::class, 'failSearch'])->name('admin.refunds.search');
+    Route::get('/ulasan', [AdminUlasanController::class, 'index'])->name('admin.ulasan.index');
+    Route::delete('/ulasan/{id}', [AdminUlasanController::class, 'destroy'])->name('admin.ulasan.destroy');
+    Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('admin.laporan.index');
+    Route::get('/laporan/penjualan', [AdminLaporanController::class, 'penjualan'])->name('admin.laporan.penjualan');
+    Route::get('/laporan/refund', [AdminLaporanController::class, 'refund'])->name('admin.laporan.refund');
     Route::get('/affiliator', [AdminAffiliatorController::class, 'index'])->name('admin.affiliator.index');
     Route::post('/affiliator', [AdminAffiliatorController::class, 'store'])->name('admin.affiliator.store');
     Route::post('/affiliator/update-status/{id}', [AdminAffiliatorController::class, 'updateStatus'])->name('admin.affiliator.status');
@@ -126,6 +154,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/history-komisi', [AdminHistoryKomisiController::class, 'index'])->name('admin.history-komisi.index');
     Route::get('/alat-promosi', [AdminAlatPromosiController::class, 'index'])->name('admin.alat-promosi.index');
     Route::post('/alat-promosi', [AdminAlatPromosiController::class, 'store'])->name('admin.alat-promosi.store');
+    Route::post('/alat-promosi/{id}', [AdminAlatPromosiController::class, 'update'])->name('admin.alat-promosi.update');
     Route::delete('/alat-promosi/{id}', [AdminAlatPromosiController::class, 'destroy'])->name('admin.alat-promosi.destroy');
     Route::post('/admin/affiliator/update-komisi-rekrut', [AdminAffiliatorController::class, 'updateKomisiRekrut'])->name('admin.affiliator.komisi_rekrut');
 });

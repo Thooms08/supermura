@@ -1,3 +1,4 @@
+@include('layouts.favicon')
 <div class="flex flex-col h-screen bg-white border-r border-gray-100 shadow-sm relative">
     <button @click="sidebarOpen = false" class="lg:hidden absolute right-4 top-4 text-gray-400 hover:text-orange-500">
         <i class="bi bi-x-lg text-xl"></i>
@@ -102,9 +103,19 @@
 
                     <li>
                         <a href="{{ route('admin.orders.process') }}" 
-                        class="flex items-center w-full p-2.5 text-xs rounded-lg pl-10 transition-all 
-                        {{ request()->routeIs('admin.orders.process') ? 'text-orange-600 font-bold' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
-                            <i class="bi bi-gear-wide-connected mr-2"></i> Proses
+                        class="flex items-center justify-between w-full p-2.5 text-xs rounded-lg pl-10 transition-all 
+                        {{ request()->routeIs('admin.orders.process') ? 'text-orange-600 font-bold bg-orange-50' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
+                            <span class="flex items-center"><i class="bi bi-gear-wide-connected mr-2"></i> Proses</span>
+                            <span id="process-badge-sub" class="hidden bg-blue-100 text-blue-600 text-[10px] px-2 py-0.5 rounded-full font-bold">0</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('admin.orders.send') }}"
+                        class="flex items-center justify-between w-full p-2.5 text-xs rounded-lg pl-10 transition-all
+                        {{ request()->routeIs('admin.orders.send') ? 'text-orange-600 font-bold bg-orange-50' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
+                            <span class="flex items-center"><i class="bi bi-send-fill mr-2"></i> Dikirim</span>
+                            <span id="send-badge-sub" class="hidden bg-indigo-100 text-indigo-600 text-[10px] px-2 py-0.5 rounded-full font-bold">0</span>
                         </a>
                     </li>
 
@@ -234,14 +245,14 @@
     </div>
 
     <div class="p-4 border-t border-gray-100 bg-gray-50/50">
-        <form action="{{ route('logout') }}" method="POST">
+        <form id="logout-form-admin" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
-            <button type="submit" 
-                    class="flex items-center w-full p-3 text-red-500 font-bold text-sm transition-all duration-200 rounded-xl hover:bg-red-50 group">
-                <i class="bi bi-box-arrow-left text-lg group-hover:scale-110 transition-transform"></i>
-                <span class="ms-3">Log Out</span>
-            </button>
         </form>
+        <button type="button" onclick="confirmLogout('logout-form-admin')"
+                class="flex items-center w-full p-3 text-red-500 font-bold text-sm transition-all duration-200 rounded-xl hover:bg-red-50 group">
+            <i class="bi bi-box-arrow-left text-lg group-hover:scale-110 transition-transform"></i>
+            <span class="ms-3">Log Out</span>
+        </button>
     </div>
 </div>
 
@@ -253,27 +264,38 @@
     [x-cloak] { display: none !important; }
 </style>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    function confirmLogout(formId) {
+        Swal.fire({
+            title: 'Keluar dari Akun?',
+            text: 'Anda akan keluar dari sesi ini.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ea580c',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Keluar',
+            cancelButtonText: 'Batal',
+            customClass: { popup: 'rounded-3xl' }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+
     function checkPendingOrders() {
         fetch("{{ route('admin.orders.pendingCount') }}")
             .then(response => response.json())
             .then(data => {
-                // Ambil elemen badge utama dan submenu
                 const badgeMain = document.getElementById('pending-badge');
-                const badgeSub = document.getElementById('pending-badge-sub');
+                const badgeSub  = document.getElementById('pending-badge-sub');
 
                 if (data.count > 0) {
-                    // Update Badge Utama (Menu Pesanan)
                     badgeMain.innerText = data.count;
                     badgeMain.classList.remove('hidden');
-
-                    // Update Badge Submenu (Daftar Pesanan)
-                    if (badgeSub) {
-                        badgeSub.innerText = data.count;
-                        badgeSub.classList.remove('hidden');
-                    }
+                    if (badgeSub) { badgeSub.innerText = data.count; badgeSub.classList.remove('hidden'); }
                 } else {
-                    // Sembunyikan keduanya jika tidak ada pesanan pending
                     badgeMain.classList.add('hidden');
                     if (badgeSub) badgeSub.classList.add('hidden');
                 }
@@ -281,32 +303,42 @@
             .catch(error => console.error('Error fetching pending count:', error));
     }
 
-    // Jalankan saat halaman dimuat
-    document.addEventListener('DOMContentLoaded', function() {
-        checkPendingOrders();
-        
-        // Polling berkala setiap 10 detik
-        setInterval(checkPendingOrders, 10000);
-    });
+    function checkProcessOrders() {
+        fetch("{{ route('admin.orders.processCount') }}")
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('process-badge-sub');
+                if (!badge) return;
+                if (data.count > 0) { badge.innerText = data.count; badge.classList.remove('hidden'); }
+                else { badge.classList.add('hidden'); }
+            })
+            .catch(() => {});
+    }
+
+    function checkSendOrders() {
+        fetch("{{ route('admin.orders.sendCount') }}")
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('send-badge-sub');
+                if (!badge) return;
+                if (data.count > 0) { badge.innerText = data.count; badge.classList.remove('hidden'); }
+                else { badge.classList.add('hidden'); }
+            })
+            .catch(() => {});
+    }
+
     function updateRefundCount() {
         fetch("{{ route('admin.refunds.count') }}")
             .then(response => response.json())
             .then(data => {
                 const badgeMain = document.getElementById('refund-badge-main');
-                const badgeSub = document.getElementById('refund-badge-sub');
+                const badgeSub  = document.getElementById('refund-badge-sub');
 
                 if (data.count > 0) {
-                    // Update Badge Utama
                     badgeMain.innerText = data.count;
                     badgeMain.classList.remove('hidden');
-
-                    // Update Badge Sub-Menu
-                    if (badgeSub) {
-                        badgeSub.innerText = data.count;
-                        badgeSub.classList.remove('hidden');
-                    }
+                    if (badgeSub) { badgeSub.innerText = data.count; badgeSub.classList.remove('hidden'); }
                 } else {
-                    // Sembunyikan jika nol
                     badgeMain.classList.add('hidden');
                     if (badgeSub) badgeSub.classList.add('hidden');
                 }
@@ -314,10 +346,14 @@
             .catch(error => console.error('Error updating refund count:', error));
     }
 
-    // Jalankan saat pertama kali halaman dimuat
     document.addEventListener('DOMContentLoaded', function() {
+        checkPendingOrders();
+        checkProcessOrders();
+        checkSendOrders();
         updateRefundCount();
-        // Polling setiap 10 detik agar terasa real-time
+        setInterval(checkPendingOrders, 10000);
+        setInterval(checkProcessOrders, 10000);
+        setInterval(checkSendOrders, 10000);
         setInterval(updateRefundCount, 10000);
     });
 </script>

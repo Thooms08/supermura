@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Refund Pending | Admin</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -76,7 +75,7 @@
                                         <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-2xl">
                                             <div class="w-14 h-14 rounded-xl overflow-hidden bg-white border flex-shrink-0">
                                                 @if($item->produk && $item->produk->fotos->first())
-                                                    <img src="{{ asset('asset/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
+                                                    <img src="{{ asset('storage/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
                                                 @else
                                                     <div class="w-full h-full flex items-center justify-center text-gray-300"><i class="bi bi-image"></i></div>
                                                 @endif

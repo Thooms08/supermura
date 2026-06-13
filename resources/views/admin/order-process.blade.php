@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pesanan Diproses | Admin</title>
-     @include('partials.favicon')
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -207,10 +205,14 @@
                                                     <form action="{{ route('admin.orders.markAsSuccess', $order->id) }}" method="POST">
                                                         @csrf @method('PATCH')
                                                         <div class="bg-green-600 p-8 text-white relative">
-                                                            <h3 class="text-xl font-black uppercase tracking-tighter">Konfirmasi Selesai</h3>
-                                                            <p class="text-green-100 text-[10px] font-bold uppercase tracking-widest opacity-80">Input Resi Pengiriman #{{ $order->nomor_pesanan }}</p>
+                                                            <h3 class="text-xl font-black uppercase tracking-tighter">Konfirmasi Pengiriman</h3>
+                                                            <p class="text-blue-100 text-[10px] font-bold uppercase tracking-widest opacity-80">Input Resi & Kirim Paket #{{ $order->nomor_pesanan }}</p>
                                                         </div>
                                                         <div class="p-8 space-y-5">
+                                                            <div class="p-3 bg-blue-50 border border-green-100 rounded-xl text-xs text-green-700 font-semibold flex items-start gap-2">
+                                                                <i class="bi bi-info-circle-fill shrink-0 mt-0.5"></i>
+                                                                Status menjadi <strong>"Dikirim"</strong>. Konfirmasi "Paket Tiba" dilakukan setelah pengunjung menerima paket.
+                                                            </div>
                                                             <div>
                                                                 <label class="text-[9px] uppercase font-black text-gray-400 block tracking-widest mb-2">Metode Pengiriman</label>
                                                                 <select name="shipping_id" class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none">
@@ -223,13 +225,15 @@
                                                             </div>
                                                             <div>
                                                                 <label class="text-[9px] uppercase font-black text-gray-400 block tracking-widest mb-2">Nomor Resi / AWB</label>
-                                                                <input type="text" name="no_resi" required placeholder="Masukkan nomor resi..." 
+                                                                <input type="text" name="no_resi" required placeholder="Masukkan nomor resi..."
                                                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none uppercase">
                                                             </div>
                                                         </div>
                                                         <div class="p-6 bg-gray-50 flex gap-3">
                                                             <button type="button" @click="openSuccess = false" class="flex-1 py-3 bg-gray-200 text-gray-700 font-black rounded-xl uppercase text-[10px] tracking-widest">Batal</button>
-                                                            <button type="submit" class="flex-1 py-3 bg-green-600 text-white font-black rounded-xl uppercase text-[10px] tracking-widest shadow-lg shadow-green-200">Selesaikan</button>
+                                                            <button type="submit" class="flex-1 py-3 bg-green-600 text-white font-black rounded-xl uppercase text-[10px] tracking-widest shadow-lg shadow-blue-200">
+                                                                <i class="bi bi-send-fill mr-1"></i> Kirim Paket
+                                                            </button>
                                                         </div>
                                                     </form>
                                                 </div>

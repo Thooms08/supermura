@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class DaftarAffiliateController extends Controller
 {
@@ -69,12 +70,7 @@ class DaftarAffiliateController extends Controller
             if ($request->hasFile('bukti_transfer')) {
                 $file = $request->file('bukti_transfer');
                 $fileName = 'bukti_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $tujuanFolder = public_path('asset/bukti-daftar-affiliator');
-                
-                if (!File::exists($tujuanFolder)) {
-                    File::makeDirectory($tujuanFolder, 0755, true);
-                }
-                $file->move($tujuanFolder, $fileName);
+                Storage::disk('public')->putFileAs('bukti-daftar-affiliator', $file, $fileName);
             }
 
             // 4. Simpan Data Affiliator Baru

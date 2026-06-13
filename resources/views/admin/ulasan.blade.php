@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderasi Ulasan | Admin </title>
-     @include('partials.favicon')
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -123,8 +121,11 @@
                                             @if($u->foto)
                                             <div class="flex flex-wrap gap-2">
                                                 @foreach($u->foto as $img)
+                                                    @php
+                                                        $imgUrl = str_starts_with($img, 'asset/') ? asset(str_replace('asset/', 'storage/', $img)) : asset('storage/ulasan/' . $img);
+                                                    @endphp
                                                     <div class="w-10 h-10 rounded-lg overflow-hidden border border-gray-100">
-                                                        <img src="{{ asset($img) }}" class="w-full h-full object-cover">
+                                                        <img src="{{ $imgUrl }}" class="w-full h-full object-cover">
                                                     </div>
                                                 @endforeach
                                             </div>

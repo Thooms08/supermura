@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile | Affiliator</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -55,7 +54,7 @@
                                     <div class="relative group">
                                         <div class="w-40 h-40 rounded-3xl overflow-hidden border-4 border-orange-100 shadow-md">
                                             @if($affiliator->foto_profile)
-                                                <img id="preview" src="{{ asset('asset/profile-affiliator/' . $affiliator->foto_profile) }}" class="w-full h-full object-cover">
+                                                <img id="preview" src="{{ asset('storage/profile-affiliator/' . $affiliator->foto_profile) }}" class="w-full h-full object-cover">
                                             @else
                                                 <div id="placeholder" class="w-full h-full bg-orange-50 flex items-center justify-center text-orange-300">
                                                     <i class="bi bi-camera text-4xl"></i>

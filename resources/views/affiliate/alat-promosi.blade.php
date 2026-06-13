@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alat Promosi | Affiliator</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -45,7 +44,7 @@
                     <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden flex flex-col">
                         <div class="h-64 bg-gray-100 relative group">
                             @if($item->poster)
-                                <img src="{{ asset('asset/alat-promosi/'.$item->poster) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/alat-promosi/'.$item->poster) }}" class="w-full h-full object-cover">
                                 <a href="{{ route('affiliate.alat-promosi.download', $item->poster) }}" 
                                    class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <span class="bg-white text-orange-600 px-6 py-2 rounded-full font-bold text-xs flex items-center gap-2">

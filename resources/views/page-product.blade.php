@@ -1,27 +1,36 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $produk->nama_produk }} | SUPERMURA.ID</title>
-    @include('partials.favicon')
+    @include('layouts.favicon')
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <meta property="og:type" content="website">
-<meta property="og:url" content="https://supermura.id/product/{{ $produk->id }}">
-<meta property="og:title" content="{{ $produk->nama_produk }} | Rp {{ number_format($produk->harga, 0, ',', '.') }}">
-<meta property="og:description" content="{{ Str::limit($produk->deskripsi, 150) }}">
-<meta property="og:image" content="{{ $produk->fotos->first() ? asset('asset/produk/' . $produk->fotos->first()->path_foto) : asset('default-image.jpg') }}">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="{{ route('product.show', $produk->slug) }}">
+    <meta property="og:title" content="{{ $produk->nama_produk }} | Rp {{ number_format($produk->harga, 0, ',', '.') }}">
+    <meta property="og:description" content="Stok tersedia: {{ $produk->totalStok() }} | {{ Str::limit($produk->deskripsi ?? 'Produk berkualitas dari SUPERMURA.ID', 150) }}">
+    <meta property="og:image" content="{{ $produk->fotos->first() ? asset('storage/produk/' . $produk->fotos->first()->path_foto) : asset('asset/default-image.jpg') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="SUPERMURA.ID">
+    <meta property="og:locale" content="id_ID">
+    <meta property="product:price:amount" content="{{ $produk->harga }}">
+    <meta property="product:price:currency" content="IDR">
 
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://supermura.id/product/{{ $produk->id }}">
-<meta property="twitter:title" content="{{ $produk->nama_produk }}">
-<meta property="twitter:description" content="{{ Str::limit($produk->deskripsi, 150) }}">
-<meta property="twitter:image" content="{{ $produk->fotos->first() ? asset('asset/produk/' . $produk->fotos->first()->path_foto) : asset('default-image.jpg') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ route('product.show', $produk->slug) }}">
+    <meta name="twitter:title" content="{{ $produk->nama_produk }} | Rp {{ number_format($produk->harga, 0, ',', '.') }}">
+    <meta name="twitter:description" content="Stok tersedia: {{ $produk->totalStok() }} | {{ Str::limit($produk->deskripsi ?? 'Produk berkualitas dari SUPERMURA.ID', 150) }}">
+    <meta name="twitter:image" content="{{ $produk->fotos->first() ? asset('storage/produk/' . $produk->fotos->first()->path_foto) : asset('asset/default-image.jpg') }}">
+
+    <meta name="description" content="{{ Str::limit($produk->deskripsi ?? 'Produk berkualitas dari SUPERMURA.ID', 160) }}">
+    <link rel="canonical" href="{{ route('product.show', $produk->slug) }}">
 
     <style>
         [x-cloak] { display: none !important; }
@@ -125,7 +134,7 @@
                          :style="`transform: translateX(-${currentIndex * 100}%)`"
                          @click="openLightbox()">
                         @foreach($produk->fotos as $foto)
-                            <img src="{{ asset('asset/produk/'.$foto->path_foto) }}" 
+                            <img src="{{ asset('storage/produk/'.$foto->path_foto) }}" 
                                  class="w-full h-full object-cover flex-shrink-0 cursor-zoom-in">
                         @endforeach
                     </div>
@@ -143,7 +152,7 @@
                     <button @click="changeFoto({{ $index }})" 
                             class="w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 transition-all"
                             :class="currentIndex === {{ $index }} ? 'border-orange-500 ring-4 ring-orange-50' : 'border-transparent opacity-60'">
-                        <img src="{{ asset('asset/produk/'.$foto->path_foto) }}" class="w-full h-full object-cover">
+                        <img src="{{ asset('storage/produk/'.$foto->path_foto) }}" class="w-full h-full object-cover">
                     </button>
                     @endforeach
                 </div>
@@ -168,7 +177,7 @@
                     @auth
                         @if($produk->variants->count() > 0)
                         <div class="space-y-4">
-                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Pilih Varian & Ukuran</label>
+                            <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Pilih Model & Ukuran</label>
                             <div class="flex flex-wrap gap-3">
                                 @foreach($produk->variants as $variant)
                                 <button @click="selectedVariant = {{ $variant }}" 
@@ -228,7 +237,7 @@
                 <div class="bg-gray-900 rounded-[2.5rem] p-6 flex items-center justify-between text-white shadow-2xl">
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 rounded-2xl overflow-hidden border-2 border-orange-500">
-                            <img src="{{ asset('asset/profile-toko/'.$produk->toko->foto_toko) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/profile-toko/'.$produk->toko->foto_toko) }}" class="w-full h-full object-cover">
                         </div>
                         <div>
                             <h4 class="font-black text-lg">{{ $produk->toko->nama_toko }}</h4>
@@ -319,7 +328,11 @@
                     @if($u->foto)
                     <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                         @foreach($u->foto as $f)
-                            <img src="{{ asset($f) }}" @click="openLightboxReview('{{ asset($f) }}')"
+                            @php
+                                // Kompatibel: path lama (asset/ulasan/x.jpg) maupun path baru (nama.jpg)
+                                $fotoUrl = str_starts_with($f, 'asset/') ? asset(str_replace('asset/', 'storage/', $f)) : asset('storage/ulasan/' . $f);
+                            @endphp
+                            <img src="{{ $fotoUrl }}" @click="openLightboxReview('{{ $fotoUrl }}')"
                                  class="w-20 h-20 rounded-2xl object-cover cursor-zoom-in border-2 border-transparent hover:border-orange-500 transition-all shrink-0">
                         @endforeach
                     </div>
@@ -403,7 +416,7 @@
             const shareData = {
                 title: "{{ $produk->nama_produk }}",
                 text: `Cek produk ini di SUPERMURA.ID: {{ $produk->nama_produk }} - Rp {{ number_format($produk->harga, 0, ',', '.') }}\n\n`,
-                url: "https://supermura.id/product/{{ $produk->id }}"
+                url: "{{ route('product.show', $produk->slug) }}"
             };
 
             try {
@@ -430,7 +443,7 @@
             totalFotos: {{ $produk->fotos->count() }},
             fotos: [
                 @foreach($produk->fotos as $foto)
-                    "{{ asset('asset/produk/'.$foto->path_foto) }}",
+                    "{{ asset('storage/produk/'.$foto->path_foto) }}",
                 @endforeach
             ],
             showLightbox: false,
@@ -539,12 +552,29 @@
                         })
                     });
 
-                    if (response.ok) {
+                    const data = await response.json();
+
+                    if (response.ok && data.success) {
                         this.showToast = true;
                         setTimeout(() => { this.showToast = false; }, 3000);
+                    } else {
+                        Swal.fire({
+                            title: 'Gagal',
+                            text: data.message || 'Terjadi kesalahan.',
+                            icon: 'warning',
+                            confirmButtonColor: '#EA580C',
+                            customClass: { popup: 'rounded-[2rem]' }
+                        });
                     }
                 } catch (error) {
                     console.error('Error:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Terjadi kesalahan jaringan.',
+                        icon: 'error',
+                        confirmButtonColor: '#EA580C',
+                        customClass: { popup: 'rounded-[2rem]' }
+                    });
                 } finally {
                     this.isAdding = false;
                 }

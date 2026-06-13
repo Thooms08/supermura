@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@include('partials.favicon')
+@include('layouts.favicon')
 
 @section('title', 'Profil Saya | SUPERMURA.ID')
 
@@ -35,7 +35,14 @@
                         <div class="absolute top-0 left-0 w-full h-2 bg-orange-500"></div>
                         
                         <div class="relative inline-block group">
-                            <img src="{{ $profil->foto_profile ? asset($profil->foto_profile) : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=FF6600&color=fff' }}" 
+                            @php
+                                $fotoProfilUrl = $profil->foto_profile
+                                    ? (str_starts_with($profil->foto_profile, 'asset/')
+                                        ? asset(str_replace('asset/', 'storage/', $profil->foto_profile))
+                                        : asset('storage/profile-pengunjung/' . $profil->foto_profile))
+                                    : 'https://ui-avatars.com/api/?name='.urlencode($user->name).'&background=FF6600&color=fff';
+                            @endphp
+                            <img src="{{ $fotoProfilUrl }}" 
                                  alt="Profile" 
                                  class="w-32 h-32 rounded-[2rem] object-cover border-4 border-orange-50 shadow-lg mb-4 mx-auto transition-transform group-hover:scale-105 duration-300" 
                                  id="previewFoto">

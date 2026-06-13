@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@include('partials.favicon')
+@include('layouts.favicon')
 
 @section('title', 'Gabung Affiliator | SUPERMURA.ID')
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Produk;
 use App\Models\ProdukVariant;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -11,8 +12,9 @@ class PublicController extends Controller
 {
     public function index()
     {
-        $produks = Produk::with(['fotos', 'toko', 'variants'])->latest()->get();
-        return view('index', compact('produks'));
+        $produks = Produk::with(['fotos', 'toko', 'variants', 'komisis', 'ulasans'])->latest()->get();
+        $komisiRekrut = (float) (Setting::where('key', 'komisi_rekrut')->value('value') ?? 0);
+        return view('index', compact('produks', 'komisiRekrut'));
     }
 
     public function show(Request $request, Produk $produk)
@@ -59,7 +61,7 @@ class PublicController extends Controller
     public function search(Request $request)
     {
         $query = $request->get('query');
-        $produks = Produk::with(['fotos', 'kategori', 'toko', 'variants'])
+        $produks = Produk::with(['fotos', 'kategori', 'toko', 'variants', 'komisis', 'ulasans'])
             ->where(function($q) use ($query) {
                 $q->where('nama_produk', 'LIKE', "%{$query}%")
                   ->orWhere('harga', 'LIKE', "%{$query}%")
@@ -69,8 +71,10 @@ class PublicController extends Controller
                   });
             })->get();
 
+        $komisiRekrut = (float) (Setting::where('key', 'komisi_rekrut')->value('value') ?? 0);
+
         return $request->ajax() 
-            ? view('partials.product-grid', compact('produks'))->render() 
-            : view('index', compact('produks'));
+            ? view('partials.product-grid-list', compact('produks', 'komisiRekrut'))->render() 
+            : view('index', compact('produks', 'komisiRekrut'));
     }
 }

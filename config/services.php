@@ -19,19 +19,19 @@ return [
     'client_id' => env('GOOGLE_CLIENT_ID'),
     'client_secret' => env('GOOGLE_CLIENT_SECRET'),
     'redirect' => env('GOOGLE_REDIRECT_URI'),
-],
+    ],
 
-#'midtrans' => [
-    #'serverKey' => env('MIDTRANS_SERVER_KEY'),
-    #'clientKey' => env('MIDTRANS_CLIENT_KEY'),
-    #'isProduction' => env('MIDTRANS_IS_PRODUCTION', false),
-#],
+    'mayar' => [
+        'api_key' => env('MAYAR_API_KEY'),
+        'webhook_token' => env('MAYAR_WEBHOOK_TOKEN'),
+        'base_url' => env('MAYAR_BASE_URL'),
+    ],
 
-'xendit' => [
-    'secret_key' => env('XENDIT_SECRET_KEY'),
-    'public_key' => env('XENDIT_PUBLIC_KEY'),
-    'callback_token' => env('XENDIT_WEBHOOK_VERIFICATION_TOKEN'), 
-],
+    'turnstile' => [
+        'key' => env('TURNSTILE_SITE_KEY'),
+        'secret' => env('TURNSTILE_SECRET_KEY'),
+    ],
+    
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

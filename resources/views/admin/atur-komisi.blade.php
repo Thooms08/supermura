@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atur Komisi | Admin</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -147,7 +146,7 @@
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4">
                                             <div class="flex items-center gap-3">
-                                                <img src="{{ asset('asset/produk/' . ($ka->fotos->first()->path_foto ?? '')) }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100" onerror="this.src='https://via.placeholder.com/150'">
+                                                <img src="{{ asset('storage/produk/' . ($ka->fotos->first()->path_foto ?? '')) }}" class="w-10 h-10 rounded-lg object-cover bg-gray-100" onerror="this.src='https://via.placeholder.com/150'">
                                                 <span class="font-bold text-gray-700">{{ $ka->nama_produk }}</span>
                                             </div>
                                         </td>

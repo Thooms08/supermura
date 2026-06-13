@@ -1,4 +1,4 @@
-@forelse($orders as $order)
+﻿@forelse($orders as $order)
 <tr class="hover:bg-red-50/20 transition-colors">
     <td class="p-6">
         <div class="font-black text-gray-800 text-sm mb-1 uppercase tracking-tighter">#{{ $order->nomor_pesanan }}</div>
@@ -11,7 +11,7 @@
             @foreach($order->items as $item)
             <div class="flex items-center gap-3">
                 @if($item->produk && $item->produk->fotos->first())
-                    <img src="{{ asset('asset/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100">
+                    <img src="{{ asset('storage/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-10 h-10 rounded-lg object-cover border border-gray-100">
                 @endif
                 <div class="flex flex-col">
                     <span class="text-xs font-bold text-gray-700 leading-tight">{{ $item->nama_produk }}</span>

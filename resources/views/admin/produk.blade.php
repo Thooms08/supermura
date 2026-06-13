@@ -1,10 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen Produk | Admin</title>
-     @include('partials.favicon')
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -18,7 +17,7 @@
       x-data="{ 
         sidebarOpen: window.innerWidth >= 1024, 
         showModal: false, 
-        selectedToko: '{{ $selectedTokoId ?? '' }}',
+        selectedToko: '{{ $selectedTokoUuid ?? '' }}',
         editMode: false,
         currentProduk: { variants: [], fotos: [], kategori: {} }
       }" 
@@ -39,11 +38,11 @@
                 </div>
                 
                 <div class="flex items-center gap-4">
-                    <select x-model="selectedToko" @change="window.location.href = '{{ route('produk.index') }}?toko_id=' + selectedToko" 
+                    <select x-model="selectedToko" @change="window.location.href = '{{ route('produk.index') }}?toko_uuid=' + selectedToko" 
                             class="bg-orange-50 border border-orange-200 text-orange-700 text-sm rounded-xl p-2.5 outline-none font-semibold">
                         <option value="">-- Pilih Toko --</option>
                         @foreach($tokos as $toko)
-                            <option value="{{ $toko->id }}" {{ $selectedTokoId == $toko->id ? 'selected' : '' }}>{{ $toko->nama_toko }}</option>
+                            <option value="{{ $toko->uuid }}" {{ $selectedTokoUuid == $toko->uuid ? 'selected' : '' }}>{{ $toko->nama_toko }}</option>
                         @endforeach
                     </select>
 
@@ -67,7 +66,7 @@
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
                         <div class="h-48 bg-gray-100 relative overflow-hidden">
                             @if($item->fotos->count() > 0)
-                                <img src="{{ asset('asset/produk/'.$item->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/produk/'.$item->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
                                 <div class="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-lg">
                                     <i class="bi bi-images"></i> {{ $item->fotos->count() }}
                                 </div>
@@ -134,7 +133,7 @@
             <form :action="editMode ? `/admin/produk/${currentProduk.id}` : '{{ route('produk.store') }}'" method="POST" enctype="multipart/form-data" class="overflow-y-auto p-8 custom-scrollbar">
                 @csrf
                 <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
-                <input type="hidden" name="toko_id" value="{{ $selectedTokoId }}">
+                <input type="hidden" name="toko_uuid" value="{{ $selectedTokoUuid }}">
 
                 <template x-for="id in deletedPhotos" :key="id">
                     <input type="hidden" name="deleted_photos[]" :value="id">

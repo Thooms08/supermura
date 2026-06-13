@@ -16,8 +16,8 @@ return new class extends Migration
                   ->constrained('pengunjung')
                   ->onDelete('cascade');
 
-            // 2. Hapus kolom user_id yang lama
-            // Gunakan dropColumn atau dropForeign jika sebelumnya sudah ada constraint
+            // 2. Drop foreign key user_id dulu sebelum drop kolom-nya
+            $table->dropForeign(['user_id']);
             $table->dropColumn('user_id');
         });
     }

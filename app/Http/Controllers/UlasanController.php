@@ -7,6 +7,7 @@ use App\Models\Pengunjung;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class UlasanController extends Controller
 {
@@ -28,8 +29,8 @@ class UlasanController extends Controller
             foreach ($request->file('foto') as $file) {
                 if (count($fotoPaths) < 5) {
                     $name = time() . '_' . rand(100, 999) . '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('asset/ulasan'), $name);
-                    $fotoPaths[] = 'asset/ulasan/' . $name;
+                    Storage::disk('public')->putFileAs('ulasan', $file, $name);
+                    $fotoPaths[] = $name;
                 }
             }
         }
@@ -72,10 +73,7 @@ class UlasanController extends Controller
         // Hapus file foto dari server jika ada
         if ($ulasan->foto) {
             foreach ($ulasan->foto as $path) {
-                $fullPath = public_path($path);
-                if (File::exists($fullPath)) {
-                    File::delete($fullPath);
-                }
+                Storage::disk('public')->delete('ulasan/' . $path);
             }
         }
 

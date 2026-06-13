@@ -1,11 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Produk Afiliasi | Affiliatord</title>
-     @include('partials.favicon')
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -69,20 +67,22 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             @foreach($produks as $p)
                                 @if($p->variants->count() > 0)
-                                    {{-- LOOPING PER VARIAN --}}
+                                    {{-- LOOPING PER VARIAN — hanya tampilkan varian yang punya data komisi --}}
                                     @foreach($p->variants as $variant)
+                                        @php
+                                            $komisiVarian = $p->komisis->where('produk_variant_id', $variant->id)->first();
+                                        @endphp
+                                        @if(!$komisiVarian)
+                                            @continue
+                                        @endif
                                     <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl hover:shadow-orange-100/50 transition-all duration-500">
                                         <div class="relative h-44 bg-gray-100 overflow-hidden">
-                                            <img src="{{ asset('asset/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" 
+                                            <img src="{{ asset('storage/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" 
                                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                            
-                                            @php
-                                                $komisiVarian = $p->komisis->where('produk_variant_id', $variant->id)->first();
-                                            @endphp
 
                                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-2xl shadow-sm border border-orange-100">
                                                 <p class="text-[10px] font-black text-orange-600 uppercase">
-                                                    Komisi Rp {{ number_format($komisiVarian->nominal_komisi ?? 0, 0, ',', '.') }}
+                                                    Komisi Rp {{ number_format($komisiVarian->nominal_komisi, 0, ',', '.') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -105,13 +105,19 @@
                                     </div>
                                     @endforeach
                                 @else
-                                    {{-- PRODUK TANPA VARIAN --}}
+                                    {{-- PRODUK TANPA VARIAN — hanya tampilkan jika ada data komisi --}}
+                                    @php
+                                        $komisiProduk = $p->komisis->where('produk_variant_id', null)->first();
+                                    @endphp
+                                    @if(!$komisiProduk)
+                                        @continue
+                                    @endif
                                     <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
                                         <div class="relative h-44 bg-gray-100">
-                                            <img src="{{ asset('asset/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" class="w-full h-full object-cover">
+                                            <img src="{{ asset('storage/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" class="w-full h-full object-cover">
                                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-2xl shadow-sm">
                                                 <p class="text-[10px] font-black text-orange-600 uppercase">
-                                                    Komisi Rp {{ number_format($p->komisis->where('produk_variant_id', null)->first()->nominal_komisi ?? 0, 0, ',', '.') }}
+                                                    Komisi Rp {{ number_format($komisiProduk->nominal_komisi, 0, ',', '.') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -152,7 +158,7 @@
                             <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 mb-4 relative group/link">
                                 <p class="text-[8px] font-black text-orange-400 uppercase mb-2">Unique Referral Link</p>
                                 <code class="text-[10px] text-orange-600 break-all font-mono block leading-relaxed" id="link-{{ $sp->id }}">
-                                    {{ url('/product/'.$sp->produk->id.'?ref='.$affiliator->id_unik) }}
+                                    {{ url('/product/'.$sp->produk->slug.'?ref='.$affiliator->id_unik) }}
                                 </code>
                             </div>
 

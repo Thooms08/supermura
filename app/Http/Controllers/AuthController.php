@@ -5,6 +5,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use RyanChandler\LaravelCloudflareTurnstile\Rules\Turnstile;
 
 class AuthController extends Controller
 {
@@ -13,14 +14,18 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        $request->validate([
+            'email'                => 'required|email',
+            'password'             => 'required',
+            'cf-turnstile-response' => ['required', new Turnstile],
+        ], [
+            'cf-turnstile-response.required' => 'Verifikasi keamanan wajib diselesaikan.',
         ]);
 
-        // Menggunakan match sebagai pengganti if-else untuk proses login
+        $credentials = $request->only('email', 'password');
+
         return match (Auth::attempt($credentials)) {
-            true => $this->processLogin($request),
+            true  => $this->processLogin($request),
             false => back()->withErrors(['email' => 'Email atau password salah.']),
         };
     }
@@ -34,16 +39,19 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'name'                 => 'required|string|max:255',
+            'email'                => 'required|string|email|unique:users',
+            'password'             => 'required|min:8|confirmed',
+            'cf-turnstile-response' => ['required', new Turnstile],
+        ], [
+            'cf-turnstile-response.required' => 'Verifikasi keamanan wajib diselesaikan.',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'pengunjung',
+            'role'     => 'pengunjung',
         ]);
 
         Auth::login($user);

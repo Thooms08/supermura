@@ -1,4 +1,4 @@
-@forelse($refunds as $refund)
+﻿@forelse($refunds as $refund)
     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-6 transition-all hover:border-red-100">
         <div class="p-6 border-b border-gray-50 flex flex-wrap justify-between items-center gap-4 bg-red-50/20">
             <div class="flex items-center gap-4">
@@ -22,7 +22,7 @@
                     <div class="flex items-center gap-4 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
                         <div class="w-14 h-14 rounded-xl overflow-hidden bg-white border flex-shrink-0">
                             @if($item->produk && $item->produk->fotos->first())
-                                <img src="{{ asset('asset/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/produk/'.$item->produk->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
                             @endif
                         </div>
                         <div class="flex-1 min-w-0">

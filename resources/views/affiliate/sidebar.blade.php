@@ -1,3 +1,4 @@
+@include('layouts.favicon')
 <div class="flex flex-col h-screen bg-white border-r border-gray-100 shadow-sm relative">
     <button @click="sidebarOpen = false" class="lg:hidden absolute right-4 top-4 text-gray-400 hover:text-orange-500">
         <i class="bi bi-x-lg text-xl"></i>
@@ -79,14 +80,14 @@
     </div>
 
     <div class="p-4 border-t border-gray-100 bg-gray-50/50">
-        <form action="{{ route('logout') }}" method="POST">
+        <form id="logout-form-affiliate" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
-            <button type="submit" 
-                    class="flex items-center w-full p-3 text-red-500 font-bold text-sm transition-all duration-200 rounded-xl hover:bg-red-50 group">
-                <i class="bi bi-box-arrow-left text-lg group-hover:scale-110 transition-transform"></i>
-                <span class="ms-3">Log Out</span>
-            </button>
         </form>
+        <button type="button" onclick="confirmLogout('logout-form-affiliate')"
+                class="flex items-center w-full p-3 text-red-500 font-bold text-sm transition-all duration-200 rounded-xl hover:bg-red-50 group">
+            <i class="bi bi-box-arrow-left text-lg group-hover:scale-110 transition-transform"></i>
+            <span class="ms-3">Log Out</span>
+        </button>
     </div>
 </div>
 
@@ -97,3 +98,24 @@
     .custom-scrollbar:hover::-webkit-scrollbar-thumb { background: #fb923c; }
     [x-cloak] { display: none !important; }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function confirmLogout(formId) {
+    Swal.fire({
+        title: 'Keluar dari Akun?',
+        text: 'Anda akan keluar dari sesi ini.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ea580c',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Ya, Keluar',
+        cancelButtonText: 'Batal',
+        customClass: { popup: 'rounded-3xl' }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById(formId).submit();
+        }
+    });
+}
+</script>

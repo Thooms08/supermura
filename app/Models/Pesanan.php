@@ -21,8 +21,17 @@ class Pesanan extends Model
         'metode_pengiriman', 
         'metode_pembayaran', 
         'no_resi',
+        'sent_at',
         'snap_token', 
-        'status'
+        'status',
+        'cancelled_before_payment',
+        'seen_at',
+    ];
+
+    protected $casts = [
+        'cancelled_before_payment' => 'boolean',
+        'seen_at'                  => 'datetime',
+        'sent_at'                  => 'datetime',
     ];
 
     // --- RELASI ---

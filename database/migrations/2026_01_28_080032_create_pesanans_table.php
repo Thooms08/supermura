@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->string('metode_pengiriman');
             $table->string('metode_pembayaran')->default('midtrans');
             $table->string('snap_token')->nullable();
-            $table->enum('status', ['pending', 'success', 'process', 'fail'])->default('pending');
+            $table->enum('status', ['pending', 'success', 'process', 'send', 'fail'])->default('pending');
             $table->timestamps();
         });
 

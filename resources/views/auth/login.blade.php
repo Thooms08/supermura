@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masuk | SUPERMURA.ID</title>
-     @include('partials.favicon')
+     @include('layouts.favicon')
+    <x-turnstile.scripts />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
@@ -60,6 +61,12 @@
                     </div>
                 </div>
 
+                <x-turnstile />
+
+                @error('cf-turnstile-response')
+                    <p class="text-red-500 text-[10px] font-bold px-1">Verifikasi gagal, silakan coba lagi.</p>
+                @enderror
+
                 <button type="submit" class="w-full bg-orange-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-orange-200 hover:bg-orange-700 hover:scale-[1.02] transition-all">
                     Masuk Sekarang <i class="bi bi-box-arrow-in-right ms-2"></i>
                 </button>
@@ -72,7 +79,7 @@
             </div>
 
             <a href="{{ route('google.login') }}" class="flex items-center justify-center gap-3 w-full bg-white border border-gray-100 py-4 rounded-2xl hover:bg-gray-50 transition-all shadow-sm">
-                <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5">
+                <img src="{{ asset('assets/images/google.svg') }}" class="w-5 h-5" alt="Google Logo">
                 <span class="text-sm font-bold text-gray-700">Masuk dengan Google</span>
             </a>
 
