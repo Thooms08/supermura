@@ -16,9 +16,12 @@ class DaftarAffiliateController extends Controller
     public function index(Request $request)
     {
         $referral_code = $request->query('ref');
-        $biaya = Setting::where('key', 'biaya_pendaftaran')->first()->value ?? 0;
-        
-        return view('daftar-affiliate', compact('biaya', 'referral_code'));
+        $biayaSetting  = Setting::where('key', 'biaya_pendaftaran')->first();
+        $biaya         = $biayaSetting->value  ?? 0;
+        $no_rek        = $biayaSetting->no_rek ?? null;
+        $qris          = $biayaSetting->qris   ?? null;
+
+        return view('daftar-affiliate', compact('biaya', 'no_rek', 'qris', 'referral_code'));
     }
 
     public function store(Request $request)
@@ -28,7 +31,9 @@ class DaftarAffiliateController extends Controller
         // Ambil nominal komisi dinamis dari setting admin (Value dari database)
         $nominalKomisi = Setting::where('key', 'komisi_rekrut')->first()->value ?? 0;
 
-        $request->validate([
+        $metodeValid = $biaya > 0 ? 'required|in:transfer,qris' : 'nullable';
+
+        $rules = [
             'id_unik'           => 'required|string|max:8|unique:affiliators,id_unik',
             'kode_referral'     => 'nullable|string|max:8',
             'nama'              => 'required|string|max:255',
@@ -36,9 +41,14 @@ class DaftarAffiliateController extends Controller
             'no_whatsapp'       => 'required|string|max:20',
             'domisili'          => 'required|string|max:255',
             'password'          => 'required|string|min:6|confirmed',
-            'metode_pembayaran' => 'required|in:transfer',
-            'bukti_transfer'    => $biaya > 0 ? 'required|image|mimes:jpg,jpeg,png|max:2048' : 'nullable',
-        ]);
+            'metode_pembayaran' => $metodeValid,
+        ];
+
+        if ($biaya > 0 && $request->metode_pembayaran === 'transfer') {
+            $rules['bukti_transfer'] = 'required|image|mimes:jpg,jpeg,png|max:2048';
+        }
+
+        $request->validate($rules);
 
         try {
             DB::beginTransaction();
@@ -81,7 +91,7 @@ class DaftarAffiliateController extends Controller
                 'nama'              => $request->nama,
                 'no_whatsapp'       => $request->no_whatsapp,
                 'domisili'          => $request->domisili,
-                'metode_pembayaran' => 'transfer',
+                'metode_pembayaran' => $request->metode_pembayaran ?? null,
                 'bukti_transfer'    => $fileName,
                 'nominal_tunai'     => 0,
                 'status'            => 'aktif',

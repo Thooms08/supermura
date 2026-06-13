@@ -17,10 +17,13 @@ class AdminAffiliatorController extends Controller
     public function index()
     {
         $affiliators = Affiliator::with('user')->latest()->get();
-        $biaya = Setting::where('key', 'biaya_pendaftaran')->first()->value ?? 0;
+        $biayaSetting = Setting::where('key', 'biaya_pendaftaran')->first();
+        $biaya        = $biayaSetting->value    ?? 0;
+        $no_rek       = $biayaSetting->no_rek   ?? null;
+        $qris         = $biayaSetting->qris     ?? null;
         $komisi_rekrut = Setting::where('key', 'komisi_rekrut')->first()->value ?? 0;
-        
-        return view('admin.data-affiliator', compact('affiliators', 'biaya', 'komisi_rekrut'));
+
+        return view('admin.data-affiliator', compact('affiliators', 'biaya', 'no_rek', 'qris', 'komisi_rekrut'));
     }
 
     public function store(Request $request)
@@ -37,12 +40,13 @@ class AdminAffiliatorController extends Controller
     ];
 
     if ($biaya > 0) {
-        $rules['metode_pembayaran'] = 'required|in:tunai,transfer';
+        $rules['metode_pembayaran'] = 'required|in:tunai,transfer,qris';
         if ($request->metode_pembayaran == 'transfer') {
             $rules['bukti_transfer'] = 'required|image|mimes:jpeg,png,jpg|max:2048';
-        } else {
+        } elseif ($request->metode_pembayaran == 'tunai') {
             $rules['nominal_tunai'] = 'required|numeric|min:' . $biaya;
         }
+        // qris: tidak perlu upload bukti, cukup pilih metode
     }
 
     $request->validate($rules);
@@ -100,11 +104,29 @@ class AdminAffiliatorController extends Controller
 
     public function updateFee(Request $request)
     {
-        $request->validate(['biaya' => 'required|numeric|min:0']);
-        Setting::updateOrCreate(
-            ['key' => 'biaya_pendaftaran'],
-            ['value' => $request->biaya]
-        );
+        $request->validate([
+            'biaya'  => 'required|numeric|min:0',
+            'no_rek' => 'required|string|max:100',
+            'qris'   => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $setting = Setting::firstOrNew(['key' => 'biaya_pendaftaran']);
+        $setting->value  = $request->biaya;
+        $setting->no_rek = $request->no_rek;
+
+        if ($request->hasFile('qris')) {
+            // Hapus file QRIS lama jika ada
+            if ($setting->qris) {
+                Storage::disk('public')->delete('qris/' . $setting->qris);
+            }
+            $file     = $request->file('qris');
+            $fileName = 'qris_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('qris', $file, $fileName);
+            $setting->qris = $fileName;
+        }
+
+        $setting->save();
+
         return back()->with('success', 'Biaya pendaftaran berhasil diperbarui!');
     }
 

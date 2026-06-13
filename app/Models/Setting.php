@@ -15,5 +15,7 @@ class Setting extends Model
     protected $fillable = [
         'key',
         'value',
+        'no_rek',
+        'qris',
     ];
 }

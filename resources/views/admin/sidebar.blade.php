@@ -218,9 +218,10 @@
 
         <li>
     <a href="{{ route('admin.pengajuan-komisi.index') }}" 
-       class="flex items-center w-full p-2.5 text-xs rounded-lg pl-10 transition-all 
+       class="flex items-center justify-between w-full p-2.5 text-xs rounded-lg pl-10 transition-all 
        {{ request()->routeIs('admin.pengajuan-komisi.*') ? 'bg-orange-50 text-orange-600 font-bold' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
-        <i class="bi bi-send-check mr-2"></i> Pengajuan Komisi
+        <span class="flex items-center"><i class="bi bi-send-check mr-2"></i> Pengajuan Komisi</span>
+        <span id="pengajuan-komisi-badge" class="hidden bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm animate-pulse">0</span>
     </a>
 </li>
 
@@ -346,14 +347,32 @@
             .catch(error => console.error('Error updating refund count:', error));
     }
 
+    function checkPengajuanKomisi() {
+        fetch("{{ route('admin.pengajuan-komisi.count') }}")
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.getElementById('pengajuan-komisi-badge');
+                if (!badge) return;
+                if (data.count > 0) {
+                    badge.innerText = data.count;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            })
+            .catch(() => {});
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         checkPendingOrders();
         checkProcessOrders();
         checkSendOrders();
         updateRefundCount();
+        checkPengajuanKomisi();
         setInterval(checkPendingOrders, 10000);
         setInterval(checkProcessOrders, 10000);
         setInterval(checkSendOrders, 10000);
         setInterval(updateRefundCount, 10000);
+        setInterval(checkPengajuanKomisi, 10000);
     });
 </script>

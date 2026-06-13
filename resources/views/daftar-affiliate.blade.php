@@ -22,13 +22,8 @@
                     </div>
                 @endif
 
-                {{-- Inisialisasi metode langsung ke 'transfer' --}}
-                <form action="{{ route('affiliate.register.store') }}" method="POST" enctype="multipart/form-data" 
-                      x-data="{ metode: 'transfer', nominalInput: 0, biayaPendaftaran: {{ $biaya }} }">
+                <form action="{{ route('affiliate.register.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
-                    {{-- Input Hidden untuk mengirim nilai default 'transfer' ke database --}}
-                    <input type="hidden" name="metode_pembayaran" value="transfer">
 
                     <div class="space-y-6">
                         <div>
@@ -111,21 +106,94 @@
 
                         {{-- Bagian Pembayaran Langsung Muncul --}}
                         @if($biaya > 0)
-                        <div class="space-y-4">
+                        <div class="space-y-4" x-data="{ metode: '{{ $qris ? '' : 'transfer' }}' }">
+
+                            {{-- Info biaya --}}
                             <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100">
                                 <p class="text-[10px] font-black text-orange-600 uppercase tracking-widest mb-1">Total Biaya Pendaftaran</p>
                                 <p class="text-xl font-black text-orange-700">Rp {{ number_format($biaya, 0, ',', '.') }}</p>
-                                <p class="text-[9px] text-orange-400 font-bold mt-1 uppercase">*Silakan transfer ke rekening admin dan upload bukti di bawah.</p>
                             </div>
 
-                            <div class="p-6 bg-blue-50 rounded-3xl border border-blue-100 space-y-3 shadow-inner shadow-blue-200/50">
-                                <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest block">
-                                    <i class="bi bi-cloud-arrow-up-fill mr-1"></i> Upload Bukti Transfer (Image)
-                                </label>
-                                <input type="file" name="bukti_transfer" required
-                                       class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
-                                <p class="text-[9px] text-blue-400 font-bold">*Format: JPG, JPEG, PNG (Maks 2MB)</p>
+                            {{-- Pilih metode —  QRIS hanya muncul jika admin sudah upload --}}
+                            <div>
+                                <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Metode Pembayaran</label>
+                                <div class="grid grid-cols-{{ $qris ? '2' : '1' }} gap-3">
+
+                                    {{-- Opsi Transfer --}}
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="metode_pembayaran" value="transfer"
+                                               x-model="metode" class="sr-only peer" {{ !$qris ? 'checked' : '' }}>
+                                        <div class="flex items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all">
+                                            <div class="w-8 h-8 bg-blue-100 peer-checked:bg-blue-500 rounded-lg flex items-center justify-center">
+                                                <i class="bi bi-bank text-blue-500 peer-checked:text-white text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-black text-gray-700">Transfer Bank</p>
+                                                <p class="text-[9px] text-gray-400">Upload bukti transfer</p>
+                                            </div>
+                                        </div>
+                                    </label>
+
+                                    {{-- Opsi QRIS — hanya jika ada --}}
+                                    @if($qris)
+                                    <label class="cursor-pointer">
+                                        <input type="radio" name="metode_pembayaran" value="qris"
+                                               x-model="metode" class="sr-only peer">
+                                        <div class="flex items-center gap-3 p-4 rounded-2xl border-2 border-gray-100 peer-checked:border-green-500 peer-checked:bg-green-50 transition-all">
+                                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                                <i class="bi bi-qr-code text-green-500 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-xs font-black text-gray-700">QRIS</p>
+                                                <p class="text-[9px] text-gray-400">Scan & bayar</p>
+                                            </div>
+                                        </div>
+                                    </label>
+                                    @endif
+                                </div>
                             </div>
+
+                            {{-- Panel Transfer: nomor rekening + upload bukti --}}
+                            <div x-show="metode === 'transfer'" x-cloak
+                                 class="p-6 bg-blue-50 rounded-3xl border border-blue-100 space-y-4 shadow-inner shadow-blue-200/50">
+                                @if($no_rek)
+                                <div class="flex items-start gap-3 p-4 bg-white rounded-2xl border border-blue-100">
+                                    <div class="w-9 h-9 bg-blue-500 rounded-xl flex items-center justify-center text-white shrink-0">
+                                        <i class="bi bi-bank text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Rekening Tujuan Transfer</p>
+                                        <p class="text-sm font-black text-blue-700">{{ $no_rek }}</p>
+                                    </div>
+                                </div>
+                                @endif
+                                <div>
+                                    <label class="text-[10px] font-black text-blue-500 uppercase tracking-widest block mb-2">
+                                        <i class="bi bi-cloud-arrow-up-fill mr-1"></i> Upload Bukti Transfer
+                                    </label>
+                                    <input type="file" name="bukti_transfer" :required="metode === 'transfer'"
+                                           accept="image/jpeg,image/png,image/jpg"
+                                           class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
+                                    <p class="text-[9px] text-blue-400 font-bold mt-1">*Format: JPG, JPEG, PNG (Maks 2MB)</p>
+                                </div>
+                            </div>
+
+                            {{-- Panel QRIS: tampilkan gambar QR --}}
+                            @if($qris)
+                            <div x-show="metode === 'qris'" x-cloak
+                                 class="p-6 bg-green-50 rounded-3xl border border-green-100 shadow-inner shadow-green-200/50 text-center space-y-3">
+                                <p class="text-[10px] font-black text-green-600 uppercase tracking-widest">Scan QRIS Berikut</p>
+                                <div class="flex justify-center">
+                                    <img src="{{ asset('storage/qris/' . $qris) }}" alt="QRIS Pembayaran"
+                                         class="w-48 h-48 object-contain rounded-2xl border-2 border-green-200 shadow-md bg-white p-2">
+                                </div>
+                                <p class="text-xs text-green-600 font-bold">
+                                    Nominal: <span class="font-black">Rp {{ number_format($biaya, 0, ',', '.') }}</span>
+                                </p>
+                                <p class="text-[9px] text-green-500 font-medium">Pastikan nominal pembayaran sesuai. Simpan bukti pembayaran untuk konfirmasi admin.</p>
+                            </div>
+                            @endif
+
                         </div>
                         @endif
 

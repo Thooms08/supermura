@@ -132,20 +132,64 @@
 
     <div x-show="modalFee" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
         <div @click.away="modalFee = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
-            <div class="p-8">
-                <h3 class="text-xl font-black text-gray-800 mb-2">Atur Biaya Pendaftaran</h3>
-                <form action="{{ route('admin.affiliator.fee') }}" method="POST">
-                    @csrf
-                    <div class="mb-6">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nominal Baru (Rp)</label>
-                        <input type="number" name="biaya" value="{{ $biaya }}" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold">
-                    </div>
-                    <div class="flex gap-3">
-                        <button type="button" @click="modalFee = false" class="flex-1 py-3 text-sm font-bold text-gray-400">Batal</button>
-                        <button type="submit" class="flex-1 py-3 bg-orange-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-orange-200">Simpan</button>
-                    </div>
-                </form>
+            <div class="bg-orange-500 p-6 text-white flex justify-between items-center">
+                <h3 class="text-lg font-black uppercase tracking-tight">Atur Biaya Pendaftaran</h3>
+                <button @click="modalFee = false" class="text-2xl hover:scale-110 transition-transform">
+                    <i class="bi bi-x-lg"></i>
+                </button>
             </div>
+            <form action="{{ route('admin.affiliator.fee') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="p-8 space-y-5">
+
+                    {{-- Nominal Biaya --}}
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">
+                            <i class="bi bi-cash-stack mr-1 text-orange-500"></i> Nominal Biaya (Rp)
+                        </label>
+                        <input type="number" name="biaya" value="{{ $biaya }}" required
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold">
+                        <p class="text-[9px] text-gray-400 mt-1">Isi 0 jika pendaftaran gratis.</p>
+                    </div>
+
+                    {{-- Nomor Rekening (wajib) --}}
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">
+                            <i class="bi bi-bank mr-1 text-orange-500"></i> Nomor Rekening <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" name="no_rek" value="{{ $no_rek }}" required
+                               placeholder="Contoh: BCA 1234567890 a/n Toko"
+                               class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                        <p class="text-[9px] text-gray-400 mt-1">Wajib diisi. Akan ditampilkan ke calon affiliator saat transfer.</p>
+                    </div>
+
+                    {{-- Upload QRIS (opsional) --}}
+                    <div>
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">
+                            <i class="bi bi-qr-code mr-1 text-orange-500"></i> QRIS <span class="text-gray-400 font-normal">(opsional)</span>
+                        </label>
+
+                        @if($qris)
+                        <div class="mb-3 p-3 bg-orange-50 border border-orange-100 rounded-2xl flex items-center gap-3">
+                            <img src="{{ asset('storage/qris/' . $qris) }}" alt="QRIS" class="w-16 h-16 object-contain rounded-xl border border-orange-200">
+                            <div>
+                                <p class="text-[9px] font-black text-orange-500 uppercase">QRIS Aktif</p>
+                                <p class="text-[9px] text-gray-400 mt-0.5">Upload baru untuk mengganti.</p>
+                            </div>
+                        </div>
+                        @endif
+
+                        <input type="file" name="qris" accept="image/jpeg,image/png,image/jpg"
+                               class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-orange-500 file:text-white hover:file:bg-orange-600">
+                        <p class="text-[9px] text-gray-400 mt-1">Format: JPG, PNG. Maks 2MB.</p>
+                    </div>
+
+                </div>
+                <div class="px-8 pb-8 flex gap-3">
+                    <button type="button" @click="modalFee = false" class="flex-1 py-3 text-sm font-bold text-gray-400 hover:text-gray-600">Batal</button>
+                    <button type="submit" class="flex-1 py-3 bg-orange-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -191,21 +235,53 @@
 
                 @if($biaya > 0)
                 <div class="pt-4 border-t border-dashed border-gray-100">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Metode Pembayaran</label>
-                    <select name="metode_pembayaran" x-model="metode" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 mb-4">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Metode Pembayaran</label>
+                    <select name="metode_pembayaran" x-model="metode" required
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 mb-4">
                         <option value="">-- Pilih Metode --</option>
                         <option value="tunai">Tunai / Cash</option>
                         <option value="transfer">Transfer Bank</option>
+                        @if($qris)
+                        <option value="qris">QRIS</option>
+                        @endif
                     </select>
 
-                    <div x-show="metode == 'transfer'" x-cloak class="p-4 bg-blue-50 border border-blue-100 rounded-2xl shadow-inner mb-4">
-                        <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Upload Bukti Transfer</label>
-                        <input type="file" name="bukti_transfer" :required="metode == 'transfer'" class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
+                    {{-- Transfer: tampilkan nomor rekening --}}
+                    <div x-show="metode == 'transfer'" x-cloak class="p-4 bg-blue-50 border border-blue-100 rounded-2xl shadow-inner mb-4 space-y-3">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white shrink-0">
+                                <i class="bi bi-bank text-sm"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Nomor Rekening Tujuan</p>
+                                <p class="text-sm font-black text-blue-700">{{ $no_rek ?: '-' }}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Upload Bukti Transfer</label>
+                            <input type="file" name="bukti_transfer" :required="metode == 'transfer'"
+                                   accept="image/jpeg,image/png,image/jpg"
+                                   class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
+                        </div>
                     </div>
 
+                    {{-- QRIS: tampilkan gambar QRIS --}}
+                    @if($qris)
+                    <div x-show="metode == 'qris'" x-cloak class="p-4 bg-green-50 border border-green-100 rounded-2xl shadow-inner mb-4">
+                        <p class="text-[9px] font-black text-green-500 uppercase tracking-widest mb-3">Scan QRIS Berikut</p>
+                        <div class="flex justify-center">
+                            <img src="{{ asset('storage/qris/' . $qris) }}" alt="QRIS"
+                                 class="w-40 h-40 object-contain rounded-2xl border-2 border-green-200 shadow">
+                        </div>
+                        <p class="text-[9px] text-center text-green-500 font-medium mt-2">Pastikan pembayaran sesuai nominal Rp <span x-text="new Intl.NumberFormat('id-ID').format(biayaPendaftaran)"></span></p>
+                    </div>
+                    @endif
+
+                    {{-- Tunai: kalkulasi kembalian --}}
                     <div x-show="metode == 'tunai'" x-cloak class="p-4 bg-orange-50 border border-orange-100 rounded-2xl shadow-inner">
                         <label class="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-2">Nominal Uang (Rp)</label>
-                        <input type="number" name="nominal_tunai" x-model="nominalInput" :required="metode == 'tunai'" class="w-full px-4 py-3 bg-white border border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600 mb-3">
+                        <input type="number" name="nominal_tunai" x-model="nominalInput" :required="metode == 'tunai'"
+                               class="w-full px-4 py-3 bg-white border border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600 mb-3">
                         
                         <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-orange-100">
                             <div>

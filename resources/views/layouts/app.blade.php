@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <title>@yield('title', 'SUPERMURA.ID | Solusi Kuliner & Fashion Terpercaya')</title>
     <meta name="description" content="@yield('meta_description', 'SUPERMURA.ID adalah platform e-commerce terpercaya yang menyediakan berbagai produk fashion berkualitas dan kuliner dengan harga terjangkau oleh PT BRYCLO MEGA JAYA.')">
     <meta name="keywords" content="@yield('meta_keywords', 'supermura, supermura.id, e-commerce indonesia, fashion murah, pt bryclo mega jaya, belanja online aman')">

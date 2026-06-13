@@ -151,6 +151,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::delete('/atur-komisi/{id}', [AdminKomisiController::class, 'destroy'])->name('admin.komisi.destroy');
     Route::get('/pengajuan-komisi', [AdminPengajuanKomisiController::class, 'index'])->name('admin.pengajuan-komisi.index');
     Route::patch('/pengajuan-komisi/{id}/status', [AdminPengajuanKomisiController::class, 'updateStatus'])->name('admin.pengajuan-komisi.update');
+    Route::get('/pengajuan-komisi-count', [AdminPengajuanKomisiController::class, 'getPendingCount'])->name('admin.pengajuan-komisi.count');
     Route::get('/history-komisi', [AdminHistoryKomisiController::class, 'index'])->name('admin.history-komisi.index');
     Route::get('/alat-promosi', [AdminAlatPromosiController::class, 'index'])->name('admin.alat-promosi.index');
     Route::post('/alat-promosi', [AdminAlatPromosiController::class, 'store'])->name('admin.alat-promosi.store');

@@ -38,5 +38,14 @@ class AdminPengajuanKomisiController extends Controller
         
         return redirect()->back()->with('success', $pesan);
     }
+
+    /**
+     * Jumlah pengajuan komisi berstatus pending (untuk badge AJAX)
+     */
+    public function getPendingCount()
+    {
+        $count = PengajuanKomisi::where('status', 'pending')->count();
+        return response()->json(['count' => $count]);
+    }
 }
 
