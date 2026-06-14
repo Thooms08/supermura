@@ -1,2 +1,46 @@
 User-agent: *
-Disallow:
+
+# Izinkan semua halaman publik
+Allow: /
+Allow: /product/
+Allow: /program-affiliate
+Allow: /daftar-affiliate
+Allow: /tentang-kami
+Allow: /faq
+Allow: /syarat-dan-ketentuan
+Allow: /kebijakan-privasi-dan-keamanan
+
+# Blokir halaman admin & panel privat
+Disallow: /admin
+Disallow: /admin/
+Disallow: /affiliate/
+Disallow: /dashboard
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /checkout
+Disallow: /checkout/
+Disallow: /keranjang
+Disallow: /pesanan-saya
+Disallow: /profile-pengunjung
+Disallow: /daftar-alamat
+Disallow: /tambah-alamat
+Disallow: /alamat/
+Disallow: /profile
+Disallow: /komisi/
+Disallow: /notifikasi
+Disallow: /produk-afiliasi
+
+# Blokir endpoint teknis & internal
+Disallow: /search-products
+Disallow: /buy-now
+Disallow: /auth/
+Disallow: /mayar/
+Disallow: /api/
+
+# Blokir asset & cache Laravel
+Disallow: /storage/bukti-daftar-affiliator/
+Disallow: /*.php$
+
+# Sitemap
+Sitemap: https://supermura.id/sitemap.xml

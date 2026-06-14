@@ -58,6 +58,17 @@ class PublicController extends Controller
         return redirect()->route('checkout');
     }
 
+    public function sitemap()
+    {
+        // Ambil semua produk yang aktif dengan slug dan waktu update terakhir
+        $produks = Produk::select('slug', 'updated_at')->latest('updated_at')->get();
+
+        $content = view('sitemap', compact('produks'))->render();
+
+        return response($content, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8');
+    }
+
     public function search(Request $request)
     {
         $query = $request->get('query');

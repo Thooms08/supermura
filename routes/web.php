@@ -59,6 +59,9 @@ Route::get('/kebijakan-privasi-dan-keamanan', function () {return view('privasi-
 Route::get('/daftar-affiliate', [DaftarAffiliateController::class, 'index'])->name('affiliate.register');
 Route::post('/daftar-affiliate', [DaftarAffiliateController::class, 'store'])->name('affiliate.register.store');
 
+// Sitemap dinamis
+Route::get('/sitemap.xml', [PublicController::class, 'sitemap'])->name('sitemap');
+
 Route::post('/mayar/callback', [PaymentCallbackController::class, 'handleMayarCallback'])->name('mayar.callback');
 // Auth Routes
 Route::middleware('guest')->group(function () {
