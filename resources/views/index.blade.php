@@ -69,12 +69,6 @@
             @endforelse
         </div>
     </main>
-
-    <footer class="bg-white border-t border-gray-100 py-12 text-center">
-        <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">
-            &copy; 2024 SUPERMURA.ID - Seluruh Hak Cipta Dilindungi
-        </p>
-    </footer>
 @endsection
 
 @push('scripts')

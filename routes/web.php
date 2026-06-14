@@ -84,7 +84,7 @@ Route::middleware(['auth'])->group(function () {
         };
     })->name('dashboard');
 
-    Route::get('/admin', function () { return view('admin.index'); })->middleware('role:admin');
+    Route::get('/admin', [AdminDashboardController::class, 'index'])->middleware('role:admin');
     Route::get('/profile-pengunjung', [PengunjungController::class, 'profile'])->name('pengunjung.profile');
     Route::post('/profile-pengunjung/update', [PengunjungController::class, 'update'])->name('pengunjung.profile.update');
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');

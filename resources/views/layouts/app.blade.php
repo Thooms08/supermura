@@ -199,7 +199,7 @@
                         <li>
                             <a href="mailto:ptbrycloe@gmail.com" class="hover:text-orange-500 transition-colors flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-orange-500"><i class="bi bi-envelope-fill"></i></div>
-                                ptbrycloe@gmail.com
+                                bryclomegajaya@gmail.com
                             </a>
                         </li>
                     </ul>
