@@ -28,7 +28,7 @@
         </aside>
 
         <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-            <header class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 sticky top-0 z-30">
+            <header class="sticky top-0 z-30 flex flex-col gap-3 border-b border-gray-200 bg-white px-4 py-4 md:h-16 md:flex-row md:items-center md:justify-between md:px-6 md:py-0">
                 <div class="flex items-center gap-4">
                     <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                         <i class="bi bi-list text-2xl"></i>
@@ -37,7 +37,7 @@
                 </div>
 
                 <button @click="editMode = false; currentMethod = { id: '', nama_metode: '', is_aktif: 1 }; showModal = true" 
-                        class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-orange-200">
+                        class="w-full justify-center bg-orange-500 hover:bg-orange-600 text-white px-5 py-3 rounded-xl text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-orange-200 md:w-auto md:py-2">
                     <i class="bi bi-plus-lg"></i> Tambah Metode
                 </button>
             </header>
@@ -50,7 +50,8 @@
                 @endif
 
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                    <table class="w-full text-left border-collapse">
+                    <div class="overflow-x-auto">
+                    <table class="w-full min-w-[720px] text-left border-collapse">
                         <thead>
                             <tr class="bg-gray-50 border-b border-gray-100">
                                 <th class="px-6 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Metode Pengiriman</th>
@@ -96,12 +97,13 @@
                             @endforelse
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </main>
         </div>
     </div>
 
-    <div x-show="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
+    <div x-show="showModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-cloak>
         <div @click.away="showModal = false" class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden scale-100 transition-all">
             <div class="p-8 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
                 <h3 class="text-xl font-black text-gray-800 uppercase tracking-tighter" x-text="editMode ? 'Edit Metode' : 'Metode Baru'"></h3>
@@ -128,7 +130,7 @@
 
                 <div class="pt-4 flex gap-3">
                     <button type="button" @click="showModal = false" class="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl uppercase tracking-widest text-xs hover:bg-gray-200 transition-all">Batal</button>
-                    <button type="submit" class="flex-[2] py-4 bg-orange-500 text-white font-black rounded-2xl shadow-xl shadow-orange-200 uppercase tracking-widest text-xs hover:bg-orange-600 transition-all">Simpan Data</button>
+                    <button type="submit" class="flex-2 py-4 bg-orange-500 text-white font-black rounded-2xl shadow-xl shadow-orange-200 uppercase tracking-widest text-xs hover:bg-orange-600 transition-all">Simpan Data</button>
                 </div>
             </form>
         </div>

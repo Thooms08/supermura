@@ -30,7 +30,7 @@
         </aside>
 
         <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <header class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200 sticky top-0 z-20">
+            <header class="sticky top-0 z-20 flex flex-col gap-3 border-b border-gray-200 bg-white px-4 py-4 md:h-16 md:flex-row md:items-center md:justify-between md:px-6 md:py-0">
                 <div class="flex items-center gap-4">
                     <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors">
                         <i class="bi bi-list text-2xl"></i>
@@ -38,9 +38,9 @@
                     <h2 class="text-lg font-bold text-gray-800">Daftar<span class="text-orange-500">Produk</span></h2>
                 </div>
                 
-                <div class="flex items-center gap-4">
+                <div class="flex w-full flex-col gap-3 sm:flex-row sm:items-center md:w-auto md:justify-end">
                     <select x-model="selectedToko" @change="window.location.href = '{{ route('produk.index') }}?toko_uuid=' + selectedToko" 
-                            class="bg-orange-50 border border-orange-200 text-orange-700 text-sm rounded-xl p-2.5 outline-none font-semibold">
+                            class="w-full bg-orange-50 border border-orange-200 text-orange-700 text-sm rounded-xl p-3 outline-none font-semibold sm:w-56">
                         <option value="">-- Pilih Toko --</option>
                         @foreach($tokos as $toko)
                             <option value="{{ $toko->uuid }}" {{ $selectedTokoUuid == $toko->uuid ? 'selected' : '' }}>{{ $toko->nama_toko }}</option>
@@ -49,7 +49,7 @@
 
                     <button @click="editMode = false; currentProduk = { variants: [], fotos: [], kategori: {} }; showModal = true" 
                             :class="selectedToko ? 'bg-orange-500 hover:bg-orange-600' : 'bg-gray-300 cursor-not-allowed'"
-                            class="text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all">
+                            class="w-full justify-center text-white px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg transition-all sm:w-auto">
                         <i class="bi bi-plus-circle"></i> Tambah Produk
                     </button>
                 </div>
@@ -62,22 +62,38 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
                     @foreach($produks as $item)
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
                         <div class="h-48 bg-gray-100 relative overflow-hidden">
                             @if($item->fotos->count() > 0)
-                                <img src="{{ asset('storage/produk/'.$item->fotos->first()->path_foto) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/produk/'.$item->fotos->first()->path_foto) }}" alt="{{ $item->nama_produk }}" class="w-full h-full object-cover">
                                 <div class="absolute top-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded-lg">
                                     <i class="bi bi-images"></i> {{ $item->fotos->count() }}
+                                </div>
+                            @else
+                                <div class="flex h-full items-center justify-center text-gray-300">
+                                    <div class="text-center">
+                                        <i class="bi bi-image text-4xl"></i>
+                                        <p class="mt-2 text-[10px] font-bold uppercase tracking-[0.2em]">Tidak ada foto</p>
+                                    </div>
                                 </div>
                             @endif
                         </div>
                         <div class="p-5">
                             <h3 class="font-bold text-gray-800 truncate uppercase text-xs">{{ $item->nama_produk }}</h3>
                             <div class="text-orange-600 font-black text-lg my-2">Rp {{ number_format($item->harga, 0, ',', '.') }}</div>
-                            <button @click="editMode = true; currentProduk = {{ $item->toJson() }}; showModal = true" 
-                                    class="w-full py-2 bg-gray-100 rounded-xl text-xs font-bold hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Produk</button>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button @click="editMode = true; currentProduk = {{ $item->toJson() }}; showModal = true" 
+                                        class="w-full py-2 bg-gray-100 rounded-xl text-xs font-bold hover:bg-orange-50 hover:text-orange-600 transition-all">Edit Produk</button>
+                                <form action="{{ route('produk.destroy', $item->slug) }}" method="POST" onsubmit="return confirm('Hapus produk ini beserta data terkait?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-full py-2 bg-red-50 text-red-600 rounded-xl text-xs font-bold hover:bg-red-500 hover:text-white transition-all">
+                                        Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     @endforeach
@@ -86,7 +102,7 @@
         </div>
     </div>
 
-    <div x-show="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak>
+    <div x-show="showModal" class="fixed inset-0 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" style="z-index: 60;" x-cloak>
         <div class="bg-white w-full max-w-6xl max-h-[95vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col scale-100 transition-all"
              x-data="{ 
                 priceMode: 'single',
@@ -131,7 +147,7 @@
                 <button @click="showModal = false" class="text-gray-400 hover:text-red-500"><i class="bi bi-x-lg text-xl"></i></button>
             </div>
             
-            <form :action="editMode ? `/admin/produk/${currentProduk.id}` : '{{ route('produk.store') }}'" method="POST" enctype="multipart/form-data" class="overflow-y-auto p-8 custom-scrollbar">
+            <form :action="editMode ? `/admin/produk/${currentProduk.slug}` : '{{ route('produk.store') }}'" method="POST" enctype="multipart/form-data" class="overflow-y-auto p-8 custom-scrollbar">
                 @csrf
                 <template x-if="editMode"><input type="hidden" name="_method" value="PUT"></template>
                 <input type="hidden" name="toko_uuid" value="{{ $selectedTokoUuid }}">
@@ -239,7 +255,7 @@
 
                 <div class="mt-10 flex gap-4">
                     <button type="button" @click="showModal = false" class="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl uppercase tracking-widest text-xs transition-all hover:bg-gray-200">Batal</button>
-                    <button type="submit" class="flex-[2] py-4 bg-orange-500 text-white font-black rounded-2xl shadow-xl shadow-orange-200 uppercase tracking-widest text-xs transition-all hover:bg-orange-600" x-text="editMode ? 'Simpan Perubahan' : 'Terbitkan Produk'"></button>
+                    <button type="submit" class="py-4 bg-orange-500 text-white font-black rounded-2xl shadow-xl shadow-orange-200 uppercase tracking-widest text-xs transition-all hover:bg-orange-600" style="flex: 2 1 0%;" x-text="editMode ? 'Simpan Perubahan' : 'Terbitkan Produk'"></button>
                 </div>
             </form>
         </div>

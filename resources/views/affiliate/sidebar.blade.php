@@ -1,5 +1,5 @@
 @include('layouts.favicon')
-<div class="flex flex-col h-screen bg-white border-r border-gray-100 shadow-sm relative">
+<div class="flex flex-col h-screen min-h-0 bg-white border-r border-gray-100 shadow-sm relative">
     <button @click="sidebarOpen = false" class="lg:hidden absolute right-4 top-4 text-gray-400 hover:text-orange-500">
         <i class="bi bi-x-lg text-xl"></i>
     </button>
@@ -13,7 +13,7 @@
         </span>
     </div>
 
-    <div class="flex-1 px-4 overflow-y-auto custom-scrollbar">
+    <div class="flex-1 min-h-0 px-4 overflow-y-auto custom-scrollbar pb-4">
         <ul class="space-y-1.5 font-medium">
             <li class="px-3 pb-2 pt-4">
                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">Menu Utama</span>
@@ -79,7 +79,7 @@
         </ul>
     </div>
 
-    <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+    <div class="shrink-0 p-4 border-t border-gray-100 bg-gray-50/50 sticky bottom-0">
         <form id="logout-form-affiliate" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
         </form>

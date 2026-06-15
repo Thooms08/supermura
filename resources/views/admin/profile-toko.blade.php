@@ -49,11 +49,18 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($tokos as $toko)
+                    @php
+                        $tokoPhotoUrl = $toko->foto_toko
+                            ? \Illuminate\Support\Facades\Storage::disk('public')->url('profile-toko/' . $toko->foto_toko)
+                            : 'https://ui-avatars.com/api/?name=' . urlencode($toko->nama_toko) . '&background=FB923C&color=fff';
+                    @endphp
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                         <div class="h-32 bg-gradient-to-r from-orange-400 to-orange-500 relative">
                             <div class="absolute -bottom-10 left-6">
-                                <img src="{{ $toko->foto_toko ? asset('storage/profile-toko/'.$toko->foto_toko) : 'https://ui-avatars.com/api/?name='.$toko->nama_toko.'&background=FB923C&color=fff' }}" 
-                                     class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-sm bg-white">
+                                <img src="{{ $tokoPhotoUrl }}" 
+                                     alt="Foto {{ $toko->nama_toko }}"
+                                     class="w-20 h-20 rounded-2xl object-cover border-4 border-white shadow-sm bg-white"
+                                     onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name={{ urlencode($toko->nama_toko) }}&background=FB923C&color=fff'">
                             </div>
                         </div>
                         <div class="pt-12 p-6">

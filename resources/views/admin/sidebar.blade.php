@@ -1,5 +1,5 @@
 @include('layouts.favicon')
-<div class="flex flex-col h-screen bg-white border-r border-gray-100 shadow-sm relative">
+<div class="flex flex-col h-screen min-h-0 bg-white border-r border-gray-100 shadow-sm relative">
     <button @click="sidebarOpen = false" class="lg:hidden absolute right-4 top-4 text-gray-400 hover:text-orange-500">
         <i class="bi bi-x-lg text-xl"></i>
     </button>
@@ -14,7 +14,8 @@
     </span>
 </div>
 
-    <div class="flex-1 px-4 overflow-y-auto custom-scrollbar">
+    <!-- PERBAIKAN DI SINI: Mengubah pb-4 menjadi pb-24 agar item terakhir bisa di-scroll jauh dari tombol Log Out -->
+    <div class="flex-1 min-h-0 px-4 overflow-y-auto custom-scrollbar pb-24">
         <ul class="space-y-1.5 font-medium">
             
             <li class="px-3 pb-2 pt-4">
@@ -152,7 +153,7 @@
     <ul x-show="open" x-cloak x-transition:enter="transition ease-out duration-100" x-transition:enter-start="opacity-0 -translate-y-2" class="mt-1 space-y-1 px-2">
         <li>
             <a href="{{ route('admin.refunds.pending') }}" 
-               class="flex items-center justify-between w-full p-2.5 text-xs rounded-lg pl-10 transition-all {{ request()->routeIs('admin.refunds.pending') ? 'text-orange-600 font-bold bg-orange-50' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
+                class="flex items-center justify-between w-full p-2.5 text-xs rounded-lg pl-10 transition-all {{ request()->routeIs('admin.refunds.pending') ? 'text-orange-600 font-bold bg-orange-50' : 'text-gray-500 hover:bg-orange-50 hover:text-orange-600' }}">
                 <span>Pending</span>
                 
                 <span id="refund-badge-sub" class="hidden bg-orange-100 text-orange-600 text-[10px] px-2 py-0.5 rounded-full font-bold">
@@ -245,7 +246,8 @@
         </ul>
     </div>
 
-    <div class="p-4 border-t border-gray-100 bg-gray-50/50">
+    <!-- PERBAIKAN DI SINI: bg-gray-50/50 diubah ke bg-gray-50 (solid) dan ditambah z-10 agar tidak tembus pandang -->
+    <div class="shrink-0 p-4 border-t border-gray-100 bg-gray-50 sticky bottom-0 z-10">
         <form id="logout-form-admin" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
         </form>
