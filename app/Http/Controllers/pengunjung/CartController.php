@@ -32,9 +32,15 @@ class CartController extends Controller
         $produk    = Produk::findOrFail($request->produk_id);
         $variantId = $request->variant_id;
 
+        if ((int) session('referrer_product_id') === (int) $produk->id && session()->has('referrer_variant_id')) {
+            $variantId = (int) session('referrer_variant_id');
+        }
+
         // Validasi stok
         if ($variantId) {
-            $variant = ProdukVariant::findOrFail($variantId);
+            $variant = ProdukVariant::where('id', $variantId)
+                ->where('produk_id', $produk->id)
+                ->firstOrFail();
             $stokTersedia = $variant->stok;
         } else {
             $stokTersedia = $produk->totalStok();

@@ -19,7 +19,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 overflow-hidden" 
+<body class="bg-gray-50" 
       x-data="{ 
         sidebarOpen: window.innerWidth >= 1024,
         modalOpen: false,
@@ -41,14 +41,20 @@
       @resize.window="sidebarOpen = window.innerWidth >= 1024">
 
     <div class="flex h-screen overflow-hidden relative">
-        <aside :class="sidebarOpen ? 'translate-x-0 w-64' : '-translate-x-full w-0'" class="transition-all duration-300 transform bg-white border-r fixed inset-y-0 z-50 lg:relative shadow-xl lg:shadow-none">
-            @include('admin.sidebar')
+        <aside 
+            :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+            class="fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out bg-white border-r border-gray-100 shadow-2xl lg:shadow-none lg:relative lg:translate-x-0 lg:w-64 overflow-hidden">
+            <div class="h-full w-64">
+                @include('admin.sidebar')
+            </div>
         </aside>
 
+        <div x-show="sidebarOpen" @click="sidebarOpen = false" x-cloak class="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] lg:hidden"></div>
+
         <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-            <header class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200">
+            <header class="h-16 flex items-center justify-between px-4 md:px-6 bg-white border-b border-gray-200 sticky top-0 z-30">
                 <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 focus:outline-none">
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 focus:outline-none lg:hidden">
                         <i class="bi bi-list text-2xl"></i>
                     </button>
                     <h2 class="text-lg font-bold text-gray-800">Atur <span class="text-orange-500">Komisi Affiliator</span></h2>
@@ -64,33 +70,33 @@
 
                 <div class="max-w-5xl mx-auto space-y-8">
                     
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 text-center" x-show="!selectedProduk">
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-5 sm:p-8 text-center" x-show="!selectedProduk">
                         <div class="w-16 h-16 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <i class="bi bi-plus-circle-dotted text-3xl"></i>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Atur Komisi Baru</h3>
                         <p class="text-gray-500 text-sm mb-6">Klik tombol di bawah untuk memilih produk dan menentukan nominal komisi.</p>
-                        <button @click="modalOpen = true; existingKomisi = {}" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-orange-200 transition-all">
+                        <button @click="modalOpen = true; existingKomisi = {}; sidebarOpen = false" class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-2xl shadow-lg shadow-orange-200 transition-all">
                             <i class="bi bi-search mr-2"></i> PILIH PRODUK
                         </button>
                     </div>
 
                     <template x-if="selectedProduk">
                         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden animate-fade-in-up">
-                            <div class="bg-orange-500 p-6 flex items-center justify-between text-white">
-                                <div class="flex items-center gap-4">
+                            <div class="bg-orange-500 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-white">
+                                <div class="flex items-center gap-4 min-w-0">
                                     <div class="bg-white p-1 rounded-xl">
                                         <img :src="'/asset/produk/' + (selectedProduk.fotos[0]?.path_foto || '')" class="w-12 h-12 rounded-lg object-cover bg-gray-200" onerror="this.src='https://via.placeholder.com/150'">
                                     </div>
-                                    <div>
-                                        <h4 class="font-bold text-lg" x-text="selectedProduk.nama_produk"></h4>
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-base sm:text-lg truncate" x-text="selectedProduk.nama_produk"></h4>
                                         <p class="text-xs text-orange-100 uppercase tracking-widest font-bold">Sedang Mengatur Komisi</p>
                                     </div>
                                 </div>
-                                <button @click="selectedProduk = null" class="text-white/70 hover:text-white"><i class="bi bi-x-circle text-2xl"></i></button>
+                                <button @click="selectedProduk = null" class="self-end sm:self-auto text-white/70 hover:text-white"><i class="bi bi-x-circle text-2xl"></i></button>
                             </div>
 
-                            <form action="{{ route('admin.komisi.store') }}" method="POST" class="p-8">
+                            <form action="{{ route('admin.komisi.store') }}" method="POST" class="p-4 sm:p-8">
                                 @csrf
                                 <input type="hidden" name="produk_id" :value="selectedProduk.id">
 
@@ -99,27 +105,27 @@
                                         <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Nominal Komisi (IDR)</label>
                                         <div class="relative">
                                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">Rp</span>
-                                            <input type="number" name="komisi[single]" x-model="existingKomisi['single']" class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-orange-500 rounded-2xl outline-none font-bold text-lg transition-all" placeholder="0">
+                                            <input type="number" name="komisi[single]" x-model="existingKomisi['single']" class="w-full pl-12 pr-4 py-4 bg-gray-50 border-2 border-transparent focus:border-orange-500 rounded-2xl outline-none font-bold text-base sm:text-lg transition-all" placeholder="0">
                                         </div>
                                     </div>
                                 </template>
 
                                 <template x-if="selectedProduk.variants.length > 0">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                                         <template x-for="variant in selectedProduk.variants" :key="variant.id">
-                                            <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100">
-                                                <label class="block text-xs font-bold text-orange-600 uppercase mb-3" x-text="'Variant: ' + variant.model + ' (' + variant.size + ')'"></label>
+                                            <div class="p-4 sm:p-5 bg-gray-50 rounded-2xl border border-gray-100">
+                                                <label class="block text-xs font-bold text-orange-600 uppercase mb-3 wrap-break-word" x-text="'Variant: ' + variant.model + ' (' + variant.size + ')' "></label>
                                                 <div class="relative">
                                                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">Rp</span>
-                                                    <input type="number" :name="'komisi[' + variant.id + ']'" x-model="existingKomisi[variant.id]" class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold" placeholder="0">
+                                                    <input type="number" :name="'komisi[' + variant.id + ']'" x-model="existingKomisi[variant.id]" class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-bold text-sm sm:text-base" placeholder="0">
                                                 </div>
                                             </div>
                                         </template>
                                     </div>
                                 </template>
 
-                                <div class="flex gap-4 mt-8">
-                                    <button type="submit" class="flex-1 bg-gray-800 hover:bg-black text-white font-bold py-4 rounded-2xl transition-all shadow-lg">
+                                <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                                    <button type="submit" class="w-full sm:flex-1 bg-gray-800 hover:bg-black text-white font-bold py-4 rounded-2xl transition-all shadow-lg">
                                         <i class="bi bi-check2-all mr-2"></i> SIMPAN PERUBAHAN
                                     </button>
                                 </div>
@@ -128,11 +134,58 @@
                     </template>
 
                     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="p-6 border-b border-gray-50 flex items-center justify-between">
+                        <div class="p-4 sm:p-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                             <h3 class="font-bold text-gray-800">Daftar Komisi Aktif</h3>
                             <span class="bg-orange-100 text-orange-600 text-xs font-bold px-3 py-1 rounded-full">{{ $komisiAktif->count() }} Produk</span>
                         </div>
-                        <div class="overflow-x-auto">
+                        <div class="md:hidden p-4 space-y-4">
+                            @forelse($komisiAktif as $ka)
+                            <div class="rounded-2xl border border-gray-100 bg-gray-50/70 p-4 space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <img src="{{ asset('storage/produk/' . ($ka->fotos->first()->path_foto ?? '')) }}" class="w-12 h-12 rounded-xl object-cover bg-gray-100 shrink-0" onerror="this.src='https://via.placeholder.com/150'">
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <p class="font-bold text-gray-800 truncate">{{ $ka->nama_produk }}</p>
+                                                <p class="text-[11px] text-gray-400 mt-1">{{ $ka->variants->count() > 0 ? 'Variant' : 'Satuan' }}</p>
+                                            </div>
+                                            <span class="shrink-0 px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $ka->variants->count() > 0 ? 'bg-purple-50 text-purple-600' : 'bg-blue-50 text-blue-600' }}">
+                                                {{ $ka->variants->count() > 0 ? 'Variant' : 'Satuan' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($ka->komisis as $kom)
+                                    <span class="text-[11px] bg-white text-gray-600 px-2 py-1 rounded-lg font-medium border border-gray-200">
+                                        @if($kom->produk_variant_id)
+                                            {{ $kom->variant->model }}:
+                                        @endif
+                                        Rp{{ number_format($kom->nominal_komisi, 0, ',', '.') }}
+                                    </span>
+                                    @endforeach
+                                </div>
+
+                                <div class="flex items-center justify-end gap-2 pt-1">
+                                    <button @click="editKomisi({{ $ka }})" class="px-3 py-2 text-blue-500 hover:bg-blue-50 rounded-xl transition-colors text-sm font-medium">
+                                        <i class="bi bi-pencil-square mr-1"></i> Edit
+                                    </button>
+                                    <form action="{{ route('admin.komisi.destroy', $ka->id) }}" method="POST" onsubmit="return confirm('Hapus semua pengaturan komisi untuk produk ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors text-sm font-medium">
+                                            <i class="bi bi-trash3 mr-1"></i> Hapus
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="px-4 py-10 text-center text-gray-400 italic">Belum ada komisi yang diatur.</div>
+                            @endforelse
+                        </div>
+
+                        <div class="hidden md:block overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead class="bg-gray-50/50 text-gray-400 text-[10px] uppercase tracking-widest font-bold">
                                     <tr>
@@ -197,7 +250,7 @@
             </main>
         </div>
 
-        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div x-show="modalOpen" x-cloak class="fixed inset-0 z-100 flex items-center justify-center p-4">
             <div x-show="modalOpen" x-transition.opacity @click="modalOpen = false" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
             
             <div x-show="modalOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl relative overflow-hidden flex flex-col max-h-[80vh]">
@@ -209,8 +262,8 @@
                 <div class="p-4 overflow-y-auto custom-scrollbar">
                     <div class="grid grid-cols-1 gap-3">
                         @foreach($produks as $p)
-                        <div @click="editKomisi({{ $p }}); modalOpen = false" class="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all group">
-                            <div class="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex-shrink-0">
+                        <div @click="editKomisi({{ $p }}); modalOpen = false; sidebarOpen = false" class="flex items-center gap-4 p-4 rounded-2xl border border-gray-100 hover:border-orange-500 hover:bg-orange-50 cursor-pointer transition-all group">
+                            <div class="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden shrink-0">
                                 <img src="{{ asset('/asset/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150'">
                             </div>
                             <div class="flex-1">

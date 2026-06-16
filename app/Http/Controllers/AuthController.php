@@ -33,7 +33,12 @@ class AuthController extends Controller
     private function processLogin($request)
     {
         $request->session()->regenerate();
-        return redirect()->route('dashboard');
+
+        return match (Auth::user()?->role) {
+            'admin'      => redirect('/admin'),
+            'affiliator' => redirect()->route('affiliate.dashboard'),
+            default      => redirect()->route('dashboard'),
+        };
     }
 
     public function register(Request $request)

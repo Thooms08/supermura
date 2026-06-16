@@ -59,7 +59,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    <div class="lg:col-span-2 space-y-6">
+                    <div class="order-2 lg:order-1 lg:col-span-2 space-y-6">
                         <div class="flex items-center justify-between">
                             <h5 class="text-xs font-black text-gray-400 uppercase tracking-widest">Katalog Tersedia</h5>
                             <span class="text-[10px] bg-orange-100 text-orange-600 px-3 py-1 rounded-full font-bold">LIVE UPDATE</span>
@@ -76,7 +76,7 @@
                                         @if(!$komisiVarian)
                                             @continue
                                         @endif
-                                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl hover:shadow-orange-100/50 transition-all duration-500">
+                                    <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl hover:shadow-orange-100/50 transition-all duration-500">
                                         <div class="relative h-44 bg-gray-100 overflow-hidden">
                                             <img src="{{ asset('storage/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" 
                                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
@@ -98,6 +98,7 @@
                                             <form action="{{ route('affiliate.produk.store') }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="produk_id" value="{{ $p->id }}">
+                                                <input type="hidden" name="variant_id" value="{{ $variant->id }}">
                                                 <button class="w-full py-4 bg-gray-900 hover:bg-orange-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg hover:-translate-y-1">
                                                     Promosikan Varian Ini
                                                 </button>
@@ -113,7 +114,7 @@
                                     @if(!$komisiProduk)
                                         @continue
                                     @endif
-                                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
+                                    <div class="bg-white rounded-4xl border border-gray-100 shadow-sm overflow-hidden group hover:shadow-xl transition-all">
                                         <div class="relative h-44 bg-gray-100">
                                             <img src="{{ asset('storage/produk/' . ($p->fotos->first()->path_foto ?? '')) }}" class="w-full h-full object-cover">
                                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-2xl shadow-sm">
@@ -138,28 +139,30 @@
                         </div>
                     </div>
 
-                    <div class="space-y-6">
-                        <h5 class="text-xs font-black text-gray-400 uppercase tracking-widest">Link Promosi Saya</h5>
+                    <div class="order-1 lg:order-2 space-y-6">
+                        <div class="sticky top-16 z-20 -mx-4 px-4 py-3 bg-gray-50/95 backdrop-blur border-b border-gray-100 lg:static lg:mx-0 lg:px-0 lg:py-0 lg:bg-transparent lg:backdrop-blur-0 lg:border-b-0">
+                            <h5 class="text-xs font-black text-gray-400 uppercase tracking-widest">Link Promosi Saya</h5>
+                        </div>
                         
                         @forelse($selectedProducts as $sp)
-                        <div class="bg-white p-6 rounded-[2.5rem] border-2 border-orange-100 shadow-sm hover:border-orange-500 transition-all duration-300">
-                            <div class="flex justify-between items-start mb-4">
+                        <div class="bg-white p-4 sm:p-6 rounded-[2.5rem] border-2 border-orange-100 shadow-sm hover:border-orange-500 transition-all duration-300">
+                            <div class="flex justify-between items-start gap-3 mb-4">
                                 <div>
-                                    <h6 class="text-sm font-black text-gray-800 leading-tight">{{ $sp->produk->nama_produk }}</h6>
+                                    <h6 class="text-sm font-black text-gray-800 leading-tight line-clamp-2">{{ $sp->produk->nama_produk }}</h6>
                                     <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">Status: Siap Bagikan</p>
                                 </div>
                                 <form action="{{ route('affiliate.produk.destroy', $sp->id) }}" method="POST">
                                     @csrf @method('DELETE')
-                                    <button class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                                    <button class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shrink-0">
                                         <i class="bi bi-trash-fill text-xs"></i>
                                     </button>
                                 </form>
                             </div>
 
-                            <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100 mb-4 relative group/link">
+                            <div class="bg-orange-50 p-3 sm:p-4 rounded-2xl border border-orange-100 mb-4 relative group/link">
                                 <p class="text-[8px] font-black text-orange-400 uppercase mb-2">Unique Referral Link</p>
-                                <code class="text-[10px] text-orange-600 break-all font-mono block leading-relaxed" id="link-{{ $sp->id }}">
-                                    {{ url('/product/'.$sp->produk->slug.'?ref='.$affiliator->id_unik) }}
+                                <code class="text-[10px] text-orange-600 break-all font-mono block leading-relaxed max-w-full" id="link-{{ $sp->id }}">
+                                    {{ url('/product/'.$sp->produk->slug.'?ref='.$affiliator->id_unik.($sp->produk_variant_id ? '&variant_id='.$sp->produk_variant_id : '')) }}
                                 </code>
                             </div>
 

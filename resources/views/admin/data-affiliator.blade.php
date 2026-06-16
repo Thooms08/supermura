@@ -44,17 +44,17 @@
 
         <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
             
-            <header class="h-16 flex items-center justify-between px-4 md:px-6 bg-white border-b border-gray-200 sticky top-0 z-30">
-                <div class="flex items-center gap-4">
-                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors focus:outline-none">
+            <header class="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 py-3 md:px-6 md:py-0 md:h-16 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div class="flex items-center gap-3 md:gap-4 shrink-0">
+                    <button @click="sidebarOpen = !sidebarOpen" class="p-2 rounded-lg text-gray-600 hover:bg-orange-50 hover:text-orange-600 transition-colors focus:outline-none shrink-0">
                         <i class="bi bi-list text-2xl"></i>
                     </button>
-                    <h2 class="text-lg font-bold text-gray-800 tracking-tight hidden sm:block">
+                    <h2 class="text-base sm:text-lg font-bold text-gray-800 tracking-tight leading-none whitespace-nowrap">
                         Data<span class="text-orange-500">Affiliator</span>
                     </h2>
                 </div>
 
-                <div class="flex-1 max-w-xs mx-4">
+                <div class="order-3 md:order-2 w-full md:flex-1 md:max-w-xs md:mx-4">
                     <div class="relative w-full">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="bi bi-search text-gray-400 text-sm"></i>
@@ -64,14 +64,14 @@
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <button @click="modalKomisi = true" class="px-4 py-2 bg-orange-100 text-orange-700 rounded-xl text-xs font-bold hover:bg-orange-200 transition-all">
+                <div class="order-2 md:order-3 flex w-full flex-col sm:flex-row gap-2 md:w-auto md:flex-none">
+                    <button @click="modalKomisi = true" class="w-full sm:w-auto px-4 py-2 bg-orange-100 text-orange-700 rounded-xl text-xs font-bold hover:bg-orange-200 transition-all whitespace-nowrap">
                         <i class="bi bi-gift-fill mr-1"></i> KOMISI REKRUT
                     </button>
-                    <button @click="modalFee = true" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold hover:bg-gray-200 transition-all">
+                    <button @click="modalFee = true" class="w-full sm:w-auto px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold hover:bg-gray-200 transition-all whitespace-nowrap">
                         <i class="bi bi-gear-fill mr-1"></i> BIAYA
                     </button>
-                    <button @click="modalAdd = true" class="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all">
+                    <button @click="modalAdd = true" class="w-full sm:w-auto px-4 py-2 bg-orange-500 text-white rounded-xl text-xs font-bold shadow-lg shadow-orange-200 hover:bg-orange-600 transition-all whitespace-nowrap">
                         <i class="bi bi-plus-lg mr-1"></i> AFFILIATOR
                     </button>
                 </div>
@@ -130,7 +130,7 @@
         </div>
     </div>
 
-    <div x-show="modalFee" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+    <div x-show="modalFee" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
         <div @click.away="modalFee = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
             <div class="bg-orange-500 p-6 text-white flex justify-between items-center">
                 <h3 class="text-lg font-black uppercase tracking-tight">Atur Biaya Pendaftaran</h3>
@@ -193,7 +193,7 @@
         </div>
     </div>
 
-    <div x-show="modalAdd" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+    <div x-show="modalAdd" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
     <div @click.away="modalAdd = false" 
          class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
         
@@ -337,7 +337,7 @@
         </form>
     </div>
 </div>
-<div x-show="modalKomisi" x-cloak class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+<div x-show="modalKomisi" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
     <div @click.away="modalKomisi = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
         <div class="p-8">
             <h3 class="text-xl font-black text-gray-800 mb-2 uppercase tracking-tighter">Komisi Rekrut Affiliator</h3>

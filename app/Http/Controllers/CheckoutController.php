@@ -43,6 +43,20 @@ class CheckoutController extends Controller
                 ->whereIn('id', $cartIds)
                 ->get();
 
+            if ((int) session('referrer_product_id') && session()->has('referrer_variant_id')) {
+                $lockedProductId = (int) session('referrer_product_id');
+                $lockedVariantId = (int) session('referrer_variant_id');
+
+                $invalidLockedItems = $cartItems->contains(function ($item) use ($lockedProductId, $lockedVariantId) {
+                    return (int) $item->produk_id === $lockedProductId
+                        && (int) $item->variant_id !== $lockedVariantId;
+                });
+
+                if ($invalidLockedItems) {
+                    return redirect()->route('checkout')->with('error', 'Keranjang berisi varian yang tidak sesuai dengan link affiliate yang dibagikan.');
+                }
+            }
+
             if ($cartItems->isEmpty()) {
                 session()->forget('checkout_items');
                 return redirect('/')->with('error', 'Item keranjang tidak valid.');
@@ -137,6 +151,23 @@ class CheckoutController extends Controller
                     ->whereIn('id', $cartIds)
                     ->get();
 
+                if ((int) session('referrer_product_id') && session()->has('referrer_variant_id')) {
+                    $lockedProductId = (int) session('referrer_product_id');
+                    $lockedVariantId = (int) session('referrer_variant_id');
+
+                    $invalidLockedItems = $cartItems->contains(function ($item) use ($lockedProductId, $lockedVariantId) {
+                        return (int) $item->produk_id === $lockedProductId
+                            && (int) $item->variant_id !== $lockedVariantId;
+                    });
+
+                    if ($invalidLockedItems) {
+                        return response()->json([
+                            'message' => 'Keranjang berisi varian yang tidak sesuai dengan link affiliate yang dibagikan.',
+                        ], 422);
+                    }
+                }
+                                            session()->forget('checkout_items');
+                                            return redirect('/')->with('error', 'Keranjang berisi varian yang tidak sesuai dengan link affiliate yang dibagikan.');
                 foreach ($cartItems as $item) {
                     $harga = $item->variant
                         ? ($item->variant->harga_variant ?? $item->produk->harga)

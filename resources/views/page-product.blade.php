@@ -62,8 +62,8 @@
          x-transition:leave-start="opacity-100 translate-y-0"
          x-transition:leave-end="opacity-0 translate-y-10"
          x-cloak
-         class="fixed bottom-24 md:bottom-10 left-0 right-0 z-[100] flex justify-center px-4 pointer-events-none">
-        <div class="bg-gray-900 text-white px-6 py-4 rounded-[2rem] shadow-2xl flex items-center gap-4 pointer-events-auto border border-white/10 backdrop-blur-lg bg-opacity-90">
+         class="fixed bottom-24 md:bottom-10 left-0 right-0 z-100 flex justify-center px-4 pointer-events-none">
+        <div class="bg-gray-900 text-white px-6 py-4 rounded-4xl shadow-2xl flex items-center gap-4 pointer-events-auto border border-white/10 backdrop-blur-lg bg-opacity-90">
             <div class="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
                 <i class="bi bi-check2 text-xl font-bold"></i>
             </div>
@@ -135,7 +135,7 @@
                          @click="openLightbox()">
                         @foreach($produk->fotos as $foto)
                             <img src="{{ asset('storage/produk/'.$foto->path_foto) }}" 
-                                 class="w-full h-full object-cover flex-shrink-0 cursor-zoom-in">
+                                 class="w-full h-full object-cover shrink-0 cursor-zoom-in">
                         @endforeach
                     </div>
                     
@@ -180,7 +180,8 @@
                             <label class="text-xs font-black text-gray-400 uppercase tracking-widest">Pilih Model & Ukuran</label>
                             <div class="flex flex-wrap gap-3">
                                 @foreach($produk->variants as $variant)
-                                <button @click="selectedVariant = {{ $variant }}" 
+                                <button @click="if (!variantLocked) selectedVariant = {{ $variant }}" 
+                                        @disabled(!empty($lockedVariant) && $lockedVariant->id !== $variant->id)
                                         class="px-4 py-3 rounded-2xl border-2 text-xs font-bold transition-all"
                                         :class="selectedVariant && selectedVariant.id === {{ $variant->id }} ? 'border-orange-500 bg-orange-50 text-orange-600' : 'border-gray-100 text-gray-600 hover:border-orange-200'">
                                     {{ $variant->size }} - {{ $variant->model }}
@@ -214,7 +215,7 @@
                                 <span x-text="isAdding ? '...' : 'Keranjang'"></span>
                             </button>
 
-                            <form x-ref="buyNowForm" action="{{ route('buy.now') }}" method="POST" class="flex-[2]">
+                            <form x-ref="buyNowForm" action="{{ route('buy.now') }}" method="POST" class="flex-1">
                                 @csrf
                                 <input type="hidden" name="produk_id" value="{{ $produk->id }}">
                                 <input type="hidden" name="qty" :value="qty">
@@ -291,7 +292,7 @@
                     <div class="space-y-4">
                         <label class="block text-xs font-black text-gray-400 uppercase tracking-widest">Komentar Anda</label>
                         <textarea x-model="newUlasan.komentar" required
-                                  class="w-full p-6 bg-gray-50 border-none rounded-[2rem] focus:ring-2 focus:ring-orange-500 min-h-[150px] text-gray-600" 
+                                  class="w-full p-6 bg-gray-50 border-none rounded-4xl focus:ring-2 focus:ring-orange-500 min-h-[150px] text-gray-600" 
                                   placeholder="Bagaimana kualitas produk ini?"></textarea>
                     </div>
 
@@ -359,7 +360,7 @@
         </section>
     </main>
 
-    <div x-show="showEditModal" class="fixed inset-0 z-[160] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak x-transition>
+    <div x-show="showEditModal" class="fixed inset-0 z-160 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak x-transition>
         <div @click.away="showEditModal = false" class="bg-white w-full max-w-lg rounded-[3rem] p-10 shadow-2xl space-y-8">
             <h3 class="text-2xl font-black text-gray-800 uppercase tracking-tighter">Edit Ulasan Anda</h3>
             
@@ -383,20 +384,20 @@
 
             <div class="flex gap-4">
                 <button @click="showEditModal = false" class="flex-1 py-4 bg-gray-100 text-gray-500 font-black rounded-2xl hover:bg-gray-200 transition-all text-[10px] uppercase tracking-widest">Batal</button>
-                <button @click="updateUlasan" class="flex-[2] py-4 bg-orange-600 text-white font-black rounded-2xl hover:bg-orange-700 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-orange-100">Simpan Perubahan</button>
+                <button @click="updateUlasan" class="flex-1 py-4 bg-orange-600 text-white font-black rounded-2xl hover:bg-orange-700 transition-all text-[10px] uppercase tracking-widest shadow-lg shadow-orange-100">Simpan Perubahan</button>
             </div>
         </div>
     </div>
 
-    <div x-show="showLightbox" x-transition x-cloak
-         class="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 p-4">
+        <div x-show="showLightbox" x-transition x-cloak
+            class="fixed inset-0 z-150 flex items-center justify-center bg-black/95 p-4">
         <button @click="showLightbox = false" class="absolute top-6 right-6 text-white text-3xl">
             <i class="bi bi-x-lg"></i>
         </button>
         <img :src="currentLightboxFoto" class="max-w-full max-h-full object-contain rounded-xl">
     </div>
 
-    <div x-show="showAddress" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak x-transition>
+    <div x-show="showAddress" class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" x-cloak x-transition>
         <div @click.away="showAddress = false" class="bg-white w-full max-w-md rounded-[2.5rem] p-8 shadow-2xl text-center space-y-6">
             <div class="w-20 h-20 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center mx-auto">
                 <i class="bi bi-geo-alt-fill text-4xl"></i>
@@ -450,13 +451,18 @@
             currentLightboxFoto: '',
             autoSwipeInterval: null,
             showAddress: false,
-            selectedVariant: null,
+            variantLocked: {{ !empty($lockedVariant) ? 'true' : 'false' }},
+            lockedVariantId: {{ $lockedVariant?->id ?? 'null' }},
+            selectedVariant: @json($lockedVariant),
             qty: 1,
             isAdding: false,
             showToast: false,
 
             // Ulasan State
             showReviewForm: false,
+                if (this.variantLocked && !this.selectedVariant) {
+                    this.selectedVariant = @json($lockedVariant);
+                }
             showEditModal: false,
             loadingUlasan: false,
             newUlasan: {
@@ -520,6 +526,18 @@
                     });
                     return;
                 }
+
+                if (this.variantLocked && this.selectedVariant && this.selectedVariant.id !== this.lockedVariantId) {
+                    Swal.fire({
+                        title: 'Varian Dikunci',
+                        text: 'Link affiliate ini hanya bisa digunakan untuk varian yang dibagikan.',
+                        icon: 'warning',
+                        confirmButtonColor: '#EA580C',
+                        confirmButtonText: 'OKE',
+                        customClass: { popup: 'rounded-[2rem]' }
+                    });
+                    return;
+                }
                 
                 if(type === 'mobile') this.$refs.buyNowFormMobile.submit();
                 else this.$refs.buyNowForm.submit();
@@ -532,6 +550,17 @@
                         text: 'Pilih varian produk terlebih dahulu.',
                         icon: 'info',
                         confirmButtonColor: '#EA580C'
+                    });
+                    return;
+                }
+
+                if (this.variantLocked && this.selectedVariant && this.selectedVariant.id !== this.lockedVariantId) {
+                    Swal.fire({
+                        title: 'Varian Dikunci',
+                        text: 'Link affiliate ini hanya bisa digunakan untuk varian yang dibagikan.',
+                        icon: 'warning',
+                        confirmButtonColor: '#EA580C',
+                        customClass: { popup: 'rounded-[2rem]' }
                     });
                     return;
                 }
