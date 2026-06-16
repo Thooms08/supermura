@@ -93,17 +93,17 @@
                         <span class="px-3 py-1 bg-green-100 text-green-600 text-[10px] font-black rounded-full">GRATIS</span>
                     @endif
                 </div>
-                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white shadow-sm">
-                <i class="bi bi-gift"></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Komisi Rekrut Affiliator</p>
-                <h4 class="text-lg font-black text-blue-600">Rp {{ number_format($komisi_rekrut, 0, ',', '.') }}</h4>
-            </div>
-        </div>
-    </div>
+                <div class="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center text-white shadow-sm">
+                            <i class="bi bi-gift"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Komisi Rekrut Affiliator</p>
+                            <h4 class="text-lg font-black text-blue-600">Rp {{ number_format($komisi_rekrut, 0, ',', '.') }}</h4>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                     <div class="overflow-x-auto">
@@ -130,7 +130,7 @@
         </div>
     </div>
 
-    <div x-show="modalFee" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+    <div x-show="modalFee" x-cloak class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
         <div @click.away="modalFee = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
             <div class="bg-orange-500 p-6 text-white flex justify-between items-center">
                 <h3 class="text-lg font-black uppercase tracking-tight">Atur Biaya Pendaftaran</h3>
@@ -193,171 +193,172 @@
         </div>
     </div>
 
-    <div x-show="modalAdd" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
-    <div @click.away="modalAdd = false" 
-         class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-        
-        <div class="bg-orange-500 p-6 text-white flex justify-between items-center shrink-0">
-            <h3 class="text-lg font-black uppercase tracking-tight">+ Affiliator Baru</h3>
-            <button @click="modalAdd = false" class="text-2xl hover:scale-110 transition-transform">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-
-        <form action="{{ route('admin.affiliator.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col overflow-hidden">
-            @csrf
+    <div x-show="modalAdd" x-cloak class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+        <div @click.away="modalAdd = false" 
+             class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
             
-            <div class="p-6 overflow-y-auto custom-scrollbar space-y-6 max-h-[60vh]">
+            <div class="bg-orange-500 p-6 text-white flex justify-between items-center shrink-0">
+                <h3 class="text-lg font-black uppercase tracking-tight">+ Affiliator Baru</h3>
+                <button @click="modalAdd = false" class="text-2xl hover:scale-110 transition-transform">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form action="{{ route('admin.affiliator.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col overflow-hidden">
+                @csrf
                 
-                <div class="grid grid-cols-1 gap-4">
-                    <div>
-        <label class="text-[10px] font-black text-orange-500 uppercase tracking-widest block mb-2">
-            <i class="bi bi-fingerprint mr-1"></i> ID AFFILIATOR (UNIK)
-        </label>
-        <input type="text" name="id_unik" required maxlength="8" 
-               placeholder="Contoh: FL001"
-               class="w-full px-4 py-3 bg-orange-50 border border-orange-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 uppercase placeholder:text-orange-200">
-        <p class="text-[9px] text-gray-400 mt-1">*Maksimal 8 karakter, contoh: AFF01, FLV88, dll.</p>
-    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nama Lengkap</label>
-                        <input type="text" name="nama" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">No. WhatsApp</label>
-                        <input type="text" name="no_whatsapp" required placeholder="08xxxx" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Domisili</label>
-                        <input type="text" name="domisili" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                    </div>
-                </div>
-
-                @if($biaya > 0)
-                <div class="pt-4 border-t border-dashed border-gray-100">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Metode Pembayaran</label>
-                    <select name="metode_pembayaran" x-model="metode" required
-                            class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 mb-4">
-                        <option value="">-- Pilih Metode --</option>
-                        <option value="tunai">Tunai / Cash</option>
-                        <option value="transfer">Transfer Bank</option>
-                        @if($qris)
-                        <option value="qris">QRIS</option>
-                        @endif
-                    </select>
-
-                    {{-- Transfer: tampilkan nomor rekening --}}
-                    <div x-show="metode == 'transfer'" x-cloak class="p-4 bg-blue-50 border border-blue-100 rounded-2xl shadow-inner mb-4 space-y-3">
-                        <div class="flex items-start gap-3">
-                            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white shrink-0">
-                                <i class="bi bi-bank text-sm"></i>
-                            </div>
-                            <div>
-                                <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Nomor Rekening Tujuan</p>
-                                <p class="text-sm font-black text-blue-700">{{ $no_rek ?: '-' }}</p>
-                            </div>
+                <div class="p-6 overflow-y-auto custom-scrollbar space-y-6 max-h-[60vh]">
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="text-[10px] font-black text-orange-500 uppercase tracking-widest block mb-2">
+                                <i class="bi bi-fingerprint mr-1"></i> ID AFFILIATOR (UNIK)
+                            </label>
+                            <input type="text" name="id_unik" required maxlength="8" 
+                                   placeholder="Contoh: FL001"
+                                   class="w-full px-4 py-3 bg-orange-50 border border-orange-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 uppercase placeholder:text-orange-200">
+                            <p class="text-[9px] text-gray-400 mt-1">*Maksimal 8 karakter, contoh: AFF01, FLV88, dll.</p>
                         </div>
                         <div>
-                            <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Upload Bukti Transfer</label>
-                            <input type="file" name="bukti_transfer" :required="metode == 'transfer'"
-                                   accept="image/jpeg,image/png,image/jpg"
-                                   class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nama Lengkap</label>
+                            <input type="text" name="nama" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">No. WhatsApp</label>
+                            <input type="text" name="no_whatsapp" required placeholder="08xxxx" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Domisili</label>
+                            <input type="text" name="domisili" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
                         </div>
                     </div>
 
-                    {{-- QRIS: tampilkan gambar QRIS --}}
-                    @if($qris)
-                    <div x-show="metode == 'qris'" x-cloak class="p-4 bg-green-50 border border-green-100 rounded-2xl shadow-inner mb-4">
-                        <p class="text-[9px] font-black text-green-500 uppercase tracking-widest mb-3">Scan QRIS Berikut</p>
-                        <div class="flex justify-center">
-                            <img src="{{ asset('storage/qris/' . $qris) }}" alt="QRIS"
-                                 class="w-40 h-40 object-contain rounded-2xl border-2 border-green-200 shadow">
+                    @if($biaya > 0)
+                    <div class="pt-4 border-t border-dashed border-gray-100">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-3">Metode Pembayaran</label>
+                        <select name="metode_pembayaran" x-model="metode" required
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-bold text-orange-600 mb-4">
+                            <option value="">-- Pilih Metode --</option>
+                            <option value="tunai">Tunai / Cash</option>
+                            <option value="transfer">Transfer Bank</option>
+                            @if($qris)
+                            <option value="qris">QRIS</option>
+                            @endif
+                        </select>
+
+                        {{-- Transfer: tampilkan nomor rekening --}}
+                        <div x-show="metode == 'transfer'" x-cloak class="p-4 bg-blue-50 border border-blue-100 rounded-2xl shadow-inner mb-4 space-y-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white shrink-0">
+                                    <i class="bi bi-bank text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-blue-400 uppercase tracking-widest mb-0.5">Nomor Rekening Tujuan</p>
+                                    <p class="text-sm font-black text-blue-700">{{ $no_rek ?: '-' }}</p>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-black text-blue-400 uppercase tracking-widest block mb-2">Upload Bukti Transfer</label>
+                                <input type="file" name="bukti_transfer" :required="metode == 'transfer'"
+                                       accept="image/jpeg,image/png,image/jpg"
+                                       class="text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-blue-500 file:text-white hover:file:bg-blue-600 w-full">
+                            </div>
                         </div>
-                        <p class="text-[9px] text-center text-green-500 font-medium mt-2">Pastikan pembayaran sesuai nominal Rp <span x-text="new Intl.NumberFormat('id-ID').format(biayaPendaftaran)"></span></p>
+
+                        {{-- QRIS: tampilkan gambar QRIS --}}
+                        @if($qris)
+                        <div x-show="metode == 'qris'" x-cloak class="p-4 bg-green-50 border border-green-100 rounded-2xl shadow-inner mb-4">
+                            <p class="text-[9px] font-black text-green-500 uppercase tracking-widest mb-3">Scan QRIS Berikut</p>
+                            <div class="flex justify-center">
+                                <img src="{{ asset('storage/qris/' . $qris) }}" alt="QRIS"
+                                     class="w-40 h-40 object-contain rounded-2xl border-2 border-green-200 shadow">
+                            </div>
+                            <p class="text-[9px] text-center text-green-500 font-medium mt-2">Pastikan pembayaran sesuai nominal Rp <span x-text="new Intl.NumberFormat('id-ID').format(biayaPendaftaran)"></span></p>
+                        </div>
+                        @endif
+
+                        {{-- Tunai: kalkulasi kembalian --}}
+                        <div x-show="metode == 'tunai'" x-cloak class="p-4 bg-orange-50 border border-orange-100 rounded-2xl shadow-inner">
+                            <label class="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-2">Nominal Uang (Rp)</label>
+                            <input type="number" name="nominal_tunai" x-model="nominalInput" :required="metode == 'tunai'"
+                                   class="w-full px-4 py-3 bg-white border border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600 mb-3">
+                            
+                            <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-orange-100">
+                                <div>
+                                    <p class="text-[9px] font-bold text-gray-400 uppercase">Kalkulasi</p>
+                                    <template x-if="nominalInput >= biayaPendaftaran">
+                                        <p class="text-xs font-black text-green-600">KEMBALIAN: Rp <span x-text="new Intl.NumberFormat('id-ID').format(nominalInput - biayaPendaftaran)"></span></p>
+                                    </template>
+                                    <template x-if="nominalInput < biayaPendaftaran">
+                                        <p class="text-xs font-black text-red-500">KURANG: Rp <span x-text="new Intl.NumberFormat('id-ID').format(biayaPendaftaran - nominalInput)"></span></p>
+                                    </template>
+                                </div>
+                                <i class="bi bi-calculator-fill text-orange-300 text-lg"></i>
+                            </div>
+                        </div>
                     </div>
                     @endif
 
-                    {{-- Tunai: kalkulasi kembalian --}}
-                    <div x-show="metode == 'tunai'" x-cloak class="p-4 bg-orange-50 border border-orange-100 rounded-2xl shadow-inner">
-                        <label class="text-[10px] font-black text-orange-400 uppercase tracking-widest block mb-2">Nominal Uang (Rp)</label>
-                        <input type="number" name="nominal_tunai" x-model="nominalInput" :required="metode == 'tunai'"
-                               class="w-full px-4 py-3 bg-white border border-orange-200 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none font-black text-orange-600 mb-3">
+                    <div class="pt-4 border-t border-dashed border-gray-100 space-y-4">
+                        <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Informasi Akun Login</p>
                         
-                        <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-orange-100">
-                            <div>
-                                <p class="text-[9px] font-bold text-gray-400 uppercase">Kalkulasi</p>
-                                <template x-if="nominalInput >= biayaPendaftaran">
-                                    <p class="text-xs font-black text-green-600">KEMBALIAN: Rp <span x-text="new Intl.NumberFormat('id-ID').format(nominalInput - biayaPendaftaran)"></span></p>
-                                </template>
-                                <template x-if="nominalInput < biayaPendaftaran">
-                                    <p class="text-xs font-black text-red-500">KURANG: Rp <span x-text="new Intl.NumberFormat('id-ID').format(biayaPendaftaran - nominalInput)"></span></p>
-                                </template>
+                        <div>
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Email Login</label>
+                            <input type="email" name="email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                        </div>
+
+                        <div x-data="{ show: false }">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Password</label>
+                            <div class="relative">
+                                <input :type="show ? 'text' : 'password'" name="password" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                    <i class="bi" :class="show ? 'bi-eye-slash' : 'bi-eye'"></i>
+                                </button>
                             </div>
-                            <i class="bi bi-calculator-fill text-orange-300 text-lg"></i>
+                        </div>
+
+                        <div x-data="{ show: false }">
+                            <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Konfirmasi Password</label>
+                            <div class="relative">
+                                <input :type="show ? 'text' : 'password'" name="password_confirmation" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
+                                <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
+                                    <i class="bi" :class="show ? 'bi-eye-slash' : 'bi-eye'"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                @endif
 
-                <div class="pt-4 border-t border-dashed border-gray-100 space-y-4">
-                    <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest">Informasi Akun Login</p>
-                    
-                    <div>
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Email Login</label>
-                        <input type="email" name="email" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                    </div>
-
-                    <div x-data="{ show: false }">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Password</label>
-                        <div class="relative">
-                            <input :type="show ? 'text' : 'password'" name="password" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                            <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
-                                <i class="bi" :class="show ? 'bi-eye-slash' : 'bi-eye'"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div x-data="{ show: false }">
-                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Konfirmasi Password</label>
-                        <div class="relative">
-                            <input :type="show ? 'text' : 'password'" name="password_confirmation" required class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-sm font-medium">
-                            <button type="button" @click="show = !show" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400">
-                                <i class="bi" :class="show ? 'bi-eye-slash' : 'bi-eye'"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-6 bg-gray-50 border-t border-gray-100 shrink-0">
-                <button type="submit" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-orange-200 hover:bg-orange-600 hover:-translate-y-1 transition-all">
-                    Simpan Data Affiliator
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-<div x-show="modalKomisi" x-cloak class="fixed inset-0 z-60 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
-    <div @click.away="modalKomisi = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
-        <div class="p-8">
-            <h3 class="text-xl font-black text-gray-800 mb-2 uppercase tracking-tighter">Komisi Rekrut Affiliator</h3>
-            <p class="text-xs text-gray-400 mb-6 font-medium">Atur nominal komisi yang didapat affiliator saat berhasil mengajak orang baru.</p>
-            
-            <form action="{{ route('admin.affiliator.komisi_rekrut') }}" method="POST">
-                @csrf
-                <div class="mb-6">
-                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nominal Komisi Rekrut (Rp)</label>
-                    <input type="number" name="komisi_rekrut" value="{{ $komisi_rekrut }}" required 
-                           class="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-blue-600">
-                </div>
-                <div class="flex gap-3">
-                    <button type="button" @click="modalKomisi = false" class="flex-1 py-3 text-sm font-bold text-gray-400">Batal</button>
-                    <button type="submit" class="flex-1 py-3 bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-200">Simpan</button>
+                <div class="p-6 bg-gray-50 border-t border-gray-100 shrink-0">
+                    <button type="submit" class="w-full py-4 bg-orange-500 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-orange-200 hover:bg-orange-600 hover:-translate-y-1 transition-all">
+                        Simpan Data Affiliator
+                    </button>
                 </div>
             </form>
         </div>
     </div>
-</div>
+
+    <div x-show="modalKomisi" x-cloak class="fixed inset-0 z-[99] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+        <div @click.away="modalKomisi = false" class="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-8">
+                <h3 class="text-xl font-black text-gray-800 mb-2 uppercase tracking-tighter">Komisi Rekrut Affiliator</h3>
+                <p class="text-xs text-gray-400 mb-6 font-medium">Atur nominal komisi yang didapat affiliator saat berhasil mengajak orang baru.</p>
+                
+                <form action="{{ route('admin.affiliator.komisi_rekrut') }}" method="POST">
+                    @csrf
+                    <div class="mb-6">
+                        <label class="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-2">Nominal Komisi Rekrut (Rp)</label>
+                        <input type="number" name="komisi_rekrut" value="{{ $komisi_rekrut }}" required 
+                               class="w-full px-4 py-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-bold text-blue-600">
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" @click="modalKomisi = false" class="flex-1 py-3 text-sm font-bold text-gray-400">Batal</button>
+                        <button type="submit" class="flex-1 py-3 bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-200">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
         let searchInput = document.getElementById('searchAffiliator');
@@ -367,7 +368,6 @@
         searchInput.addEventListener('input', function() {
             clearTimeout(debounceTimeout);
             
-            // Debounce 300ms agar tidak terlalu sering hit server saat mengetik
             debounceTimeout = setTimeout(() => {
                 let query = searchInput.value;
                 tableBody.style.opacity = '0.5';

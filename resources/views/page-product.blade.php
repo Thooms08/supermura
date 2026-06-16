@@ -181,14 +181,26 @@
                             <div class="flex flex-wrap gap-3">
                                 @foreach($produk->variants as $variant)
                                 <button @click="if (!variantLocked) selectedVariant = {{ $variant }}" 
-                                        @disabled(!empty($lockedVariant) && $lockedVariant->id !== $variant->id)
-                                        class="px-4 py-3 rounded-2xl border-2 text-xs font-bold transition-all"
-                                        :class="selectedVariant && selectedVariant.id === {{ $variant->id }} ? 'border-orange-500 bg-orange-50 text-orange-600' : 'border-gray-100 text-gray-600 hover:border-orange-200'">
+                                        class="relative px-4 py-3 rounded-2xl border-2 text-xs font-bold transition-all"
+                                        :class="selectedVariant && selectedVariant.id === {{ $variant->id }}
+                                            ? 'border-orange-500 bg-orange-50 text-orange-600'
+                                            : 'border-gray-100 text-gray-600 hover:border-orange-200'">
                                     {{ $variant->size }} - {{ $variant->model }}
                                     <div class="text-[9px] font-medium opacity-60">Stok: {{ $variant->stok }}</div>
+                                    {{-- Badge "Promo Affiliate" khusus varian yang dikunci --}}
+                                    @if(!empty($lockedVariant) && $lockedVariant->id === $variant->id)
+                                    <span class="absolute -top-2.5 -right-2.5 bg-orange-500 text-white text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-wide shadow-md shadow-orange-200 border-2 border-white">
+                                    </span>
+                                    @endif
                                 </button>
                                 @endforeach
                             </div>
+                            @if(!empty($lockedVariant))
+                            <p class="text-[10px] text-orange-500 font-bold flex items-center gap-1.5">
+                                <i class="bi bi-lock-fill"></i>
+                                Varian dikunci oleh link promo affiliasi.
+                            </p>
+                            @endif
                         </div>
                         @endif
 
@@ -460,9 +472,6 @@
 
             // Ulasan State
             showReviewForm: false,
-                if (this.variantLocked && !this.selectedVariant) {
-                    this.selectedVariant = @json($lockedVariant);
-                }
             showEditModal: false,
             loadingUlasan: false,
             newUlasan: {
